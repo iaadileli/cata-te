@@ -1,7 +1,7 @@
 {
   "id": "/cata-te/",
-  "name": "Cuaderno de cata de té",
-  "short_name": "Cata de té",
+  "name": "Cuaderno de cata",
+  "short_name": "Catas",
   "lang": "es",
   "start_url": "./",
   "scope": "./",

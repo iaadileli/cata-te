@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cuaderno de cata de té</title>
+<title>Cuaderno de cata</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -81,8 +81,9 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 <body>
 <div class="wrap">
 <header>
-<h1>Cuaderno de cata de té</h1>
-<p>Siete pasos, en el orden en que se cata: de la hoja seca al retrogusto. Rellena lo que notes; lo que no sepas, déjalo en blanco.</p>
+<h1 id="h">Cuaderno de cata de té</h1>
+<p id="lema">Siete pasos, en el orden en que se cata: de la hoja seca al retrogusto. Rellena lo que notes; lo que no sepas, déjalo en blanco.</p>
+<div class="chips" id="clases" role="group" aria-label="Qué vas a catar" style="margin-top:18px"></div>
 </header>
 <nav aria-label="Secciones">
 <a href="#nueva" data-v="nueva">Nueva cata</a>
@@ -92,85 +93,7 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 
 <section id="v-nueva">
 <form id="f" autocomplete="off">
-<div class="step" style="border-top:0;padding-top:0">
-<h3><b>·</b>Ficha</h3>
-<div class="grid">
-<div style="grid-column:1/-1"><label for="te">Té</label><input id="te" name="te" list="teas" placeholder="Nombre del té" required></div>
-<div><label for="tipo">Tipo</label><select id="tipo" name="tipo"><option value="">—</option><option>Blanco</option><option>Verde</option><option>Oolong</option><option>Negro</option><option>Pu-erh sheng</option><option>Pu-erh shou</option><option>Otro</option></select></div>
-<div><label for="fecha">Fecha</label><input id="fecha" name="fecha" type="date"></div>
-<div><label for="metodo">Método</label><select id="metodo" name="metodo"><option>Occidental</option><option>Gongfu</option><option>Vaso / cristal</option></select></div>
-<div><label for="g">Gramos</label><input id="g" name="g" type="number" step="0.1" min="0" inputmode="decimal"></div>
-<div><label for="ml">Agua (ml)</label><input id="ml" name="ml" type="number" step="10" min="0" inputmode="numeric"></div>
-<div><label for="temp">Temperatura (°C)</label><input id="temp" name="temp" type="number" min="40" max="100" inputmode="numeric"></div>
-<div><label for="tiempo">Tiempo</label><input id="tiempo" name="tiempo" placeholder="3 min / 15 s"></div>
-<div><label for="inf">Infusión nº</label><input id="inf" name="inf" type="number" min="1" inputmode="numeric" value="1"></div>
-</div>
-<datalist id="teas"><option>Monsoon Jungle Oolong</option><option>Monsoon Thai Breakfast</option><option>Monsoon Dhara White</option><option>Choui Fong oolong con osmanto</option><option>Tie Guan Yin</option><option>Duck Shit Dan Cong</option><option>Dian Hong (Yunnan Gold)</option><option>Silver Needle</option><option>Moon Garden</option><option>2014 Xiaguan Wu Gu Feng Deng</option></datalist>
-</div>
-
-<div class="step">
-<h3><b>1</b>Hoja seca</h3>
-<p class="hint">Antes del agua. Mira y huele un puñado en la palma, caliéntalo con el aliento.</p>
-<div class="chips" data-g="hoja" data-multi>
-<button type="button" class="chip">Entera</button><button type="button" class="chip">Rota / polvo</button><button type="button" class="chip">Enrollada</button><button type="button" class="chip">Retorcida</button><button type="button" class="chip">Prensada</button><button type="button" class="chip">Con brotes</button><button type="button" class="chip">Brillante</button><button type="button" class="chip">Mate / vieja</button>
-</div>
-<label for="seco" style="margin-top:12px">Aroma en seco</label><input id="seco" name="seco" placeholder="tostado, flor, heno, cuero…">
-</div>
-
-<div class="step">
-<h3><b>2</b>Color del licor</h3>
-<p class="hint">Mira la taza a contraluz, sobre fondo blanco. Elige el tono más cercano.</p>
-<div class="liquor" id="liq"></div>
-<div class="chips" data-g="claridad" style="margin-top:12px">
-<button type="button" class="chip">Brillante y limpio</button><button type="button" class="chip">Algo turbio</button><button type="button" class="chip bad">Turbio / opaco</button>
-</div>
-</div>
-
-<div class="step">
-<h3><b>3</b>Aroma de la taza</h3>
-<p class="hint">Huele primero cerca y en caliente; luego, a los dos minutos. En gongfu, huele también la tapa.</p>
-<div class="chips" data-g="notas" data-multi>
-<button type="button" class="chip">Floral</button><button type="button" class="chip">Fruta fresca</button><button type="button" class="chip">Fruta seca</button><button type="button" class="chip">Miel</button><button type="button" class="chip">Malta / pan</button><button type="button" class="chip">Caramelo</button><button type="button" class="chip">Tostado</button><button type="button" class="chip">Cacao</button><button type="button" class="chip">Madera</button><button type="button" class="chip">Tierra / bosque</button><button type="button" class="chip">Vegetal</button><button type="button" class="chip">Lácteo</button><button type="button" class="chip">Especiado</button><button type="button" class="chip">Ahumado</button><button type="button" class="chip">Mineral</button><button type="button" class="chip">Alcanfor</button>
-</div>
-<label for="aroma" style="margin-top:12px">Con tus palabras</label><input id="aroma" name="aroma" placeholder="ciruela pasa, pan tostado…">
-</div>
-
-<div class="step">
-<h3><b>4</b>En boca</h3>
-<p class="hint">Sorbo pequeño, sorbiendo aire a la vez; muévelo por toda la boca antes de tragar. 0 = nada, 5 = mucho.</p>
-<div id="sliders"></div>
-<div class="grid" style="margin-top:12px">
-<div><label>Cuerpo</label><div class="chips" data-g="cuerpo"><button type="button" class="chip">Ligero</button><button type="button" class="chip">Medio</button><button type="button" class="chip">Denso</button></div></div>
-<div><label>Textura</label><div class="chips" data-g="textura"><button type="button" class="chip">Sedosa</button><button type="button" class="chip">Cremosa</button><button type="button" class="chip">Aguada</button><button type="button" class="chip">Áspera</button></div></div>
-</div>
-</div>
-
-<div class="step">
-<h3><b>5</b>Final</h3>
-<p class="hint">Traga y espera. Cuenta cuánto dura el sabor y fíjate si vuelve un dulzor a la garganta (huigan).</p>
-<div class="grid">
-<div><label>Retrogusto</label><div class="chips" data-g="final"><button type="button" class="chip">Corto</button><button type="button" class="chip">Medio</button><button type="button" class="chip">Largo</button></div></div>
-<div><label>Huigan (dulzor que vuelve)</label><div class="chips" data-g="huigan"><button type="button" class="chip">Sí</button><button type="button" class="chip">No</button><button type="button" class="chip">No sé</button></div></div>
-</div>
-<label for="finalt" style="margin-top:12px">Qué queda</label><input id="finalt" name="finalt" placeholder="sequedad, dulce, amargo limpio…">
-</div>
-
-<div class="step">
-<h3><b>6</b>Hoja húmeda y defectos</h3>
-<p class="hint">Abre la tetera: huele la hoja mojada y mira si se ha abierto entera. Marca solo los defectos que notes claramente.</p>
-<input id="humeda" name="humeda" placeholder="hojas enteras, olor a…" style="margin-bottom:12px">
-<div class="chips" data-g="defectos" data-multi>
-<button type="button" class="chip bad">Plano / aguado</button><button type="button" class="chip bad">Amargo agresivo</button><button type="button" class="chip bad">Seca la boca</button><button type="button" class="chip bad">Metálico</button><button type="button" class="chip bad">Viejo / rancio</button><button type="button" class="chip bad">Humedad / moho</button><button type="button" class="chip bad">Papel / cartón</button><button type="button" class="chip bad">Quemado</button><button type="button" class="chip bad">Pescado / estanque</button>
-</div>
-</div>
-
-<div class="step">
-<h3><b>7</b>Veredicto</h3>
-<div class="score"><input id="nota" name="nota" type="range" min="1" max="10" value="6" aria-label="Nota del 1 al 10"><output id="notaO">6</output></div>
-<div class="chips" data-g="repetir" style="margin:10px 0 12px"><button type="button" class="chip">Lo volvería a comprar</button><button type="button" class="chip">Quizá</button><button type="button" class="chip">No</button></div>
-<label for="ajuste">Ajuste para la próxima</label><input id="ajuste" name="ajuste" placeholder="+30 s, menos hoja, 5 °C menos…" style="margin-bottom:12px">
-<label for="libre">Notas libres</label><textarea id="libre" name="libre"></textarea>
-</div>
+<div id="pasos"></div>
 
 <div class="bar">
 <button class="btn pri" type="submit" id="save">Guardar cata</button>
@@ -185,10 +108,11 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 <p class="msg" style="margin:8px 0 18px">Tus catas se guardan en este navegador. Exporta de vez en cuando para tener copia o pasarlas a otro dispositivo.</p>
 <div class="list" id="list"></div></section>
 
-<section id="v-guia" class="guide" hidden>
+<section id="v-guia" class="guide" hidden></section>
+<template id="guia-te">
 <p class="hint">Un té bueno es equilibrado, limpio y largo: nada lo domina por accidente, no hay sabores raros y el sabor sigue después de tragar. Esto es lo que mirar en cada paso.</p>
 <div class="step"><h3><b>1</b>Hoja seca</h3><p>Dice cómo se ha hecho y conservado el té, antes de probarlo.</p><div class="ok"><div><b>Buena señal</b>Hoja de tamaño y color parejos, aroma limpio e intenso al calentarla con el aliento.</div><div><b>Mala señal</b>Mucho polvo y tallos en un té de hoja entera, olor apagado, a humedad o a armario.</div></div></div>
-<div class="step"><h3><b>2</b>Color del licor</h3><p>No dice si está bueno, pero sí si lo has hecho bien. Cada familia tiene su rango: blanco, de amarillo pálido a dorado; verde, verdoso claro; oolong, de dorado a ámbar; negro, de cobrizo a granate; shou, granate casi negro.</p><div class="ok"><div><b>Buena señal</b>Brillante y transparente, con un borde más claro donde la capa es fina.</div><div><b>Mala señal</b>Turbio u opaco: hoja vieja, sobreinfusión o agua muy dura.</div></div></div>
+<div class="step"><h3><b>2</b>Color de la infusión</h3><p>No dice si está bueno, pero sí si lo has hecho bien. Cada familia tiene su rango: blanco, de amarillo pálido a dorado; verde, verdoso claro; oolong, de dorado a ámbar; negro, de cobrizo a granate; shou, granate casi negro.</p><div class="ok"><div><b>Buena señal</b>Brillante y transparente, con un borde más claro donde la capa es fina.</div><div><b>Mala señal</b>Turbio u opaco: hoja vieja, sobreinfusión o agua muy dura.</div></div></div>
 <div class="step"><h3><b>3</b>Aroma</h3><p>Es la mitad del sabor. Huele en caliente, luego tibio: los aromas cambian al enfriar. Usa familias (floral, fruta, tostado, tierra…) antes que palabras exactas; la precisión llega con la práctica.</p><div class="ok"><div><b>Buena señal</b>Varias capas que se suceden y aparecen también en boca.</div><div><b>Mala señal</b>Un solo olor plano, o un perfume que tapa el té (señal de aromatizado).</div></div></div>
 <div class="step"><h3><b>4</b>En boca</h3><p>Separa cinco cosas: <b>dulzor</b> (natural, no azúcar), <b>amargor</b> (en la parte de atrás de la lengua), <b>astringencia</b> (no es un sabor, es la sequedad que deja en las encías, como el vino tinto), <b>acidez</b> (frescura) y <b>sabroso</b> (umami, típico de verdes japoneses). Luego el <b>cuerpo</b>: el peso del líquido, de agua a leche.</p><div class="ok"><div><b>Buena señal</b>Amargor y astringencia presentes pero que se van rápido y dejan paso a dulzor.</div><div><b>Mala señal</b>Amargor que se queda pegado o sequedad que dura minutos: casi siempre, demasiado tiempo o temperatura.</div></div></div>
 <div class="step"><h3><b>5</b>Final</h3><p>Lo que más separa un té corriente de uno excelente. Cuenta los segundos que dura el sabor después de tragar. El <b>huigan</b> es un dulzor que vuelve a la garganta un momento después; en pu-erh y oolong de calidad es muy claro.</p><div class="ok"><div><b>Buena señal</b>Final largo, limpio, que cambia; garganta fresca y salivación.</div><div><b>Mala señal</b>Sabor que desaparece al tragar, o que solo deja sequedad.</div></div></div>
@@ -200,79 +124,204 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 <li><b>Boca limpia.</b> Agua sin gas entre tés; nada de café ni comida fuerte antes.</li>
 <li><b>No adivines.</b> Si no notas algo, déjalo en blanco. Lo que escribes tiene que ser lo que notas, no lo que pone la etiqueta.</li>
 </ul></div>
-</section>
+</template>
 </div>
 
 <script>
 {
-const LIQ=[["Amarillo pálido","#e9d98a"],["Dorado","#d9a93b"],["Ámbar","#c47a22"],["Cobrizo","#a8431b"],["Granate","#6d1d12"],["Opaco","#2b130c"]];
-const SL=[["dulzor","Dulzor"],["amargor","Amargor"],["astringencia","Astringencia"],["acidez","Acidez"],["umami","Sabroso"]];
-const LS="cata-te-v1",DR="cata-te-draft";
+// ——— Qué se cata: cada clase es un formulario, su lista y su guía ———
+// Los nombres que empiezan por "!" son defectos (van en cobre).
+const T=(k,l,x)=>({k,l,...x}),HOY=T("fecha","Fecha",{t:"date"});
+const num=(k,l,x)=>T(k,l,{t:"number",min:0,...x}),sel=(k,l,o,x)=>T(k,l,{o,blank:true,...x});
+const G=(t,p,ok,ko)=>({t,p,ok,ko});
+const CL={
+te:{n:"Té",de:"té",name:"te",lema:"Siete pasos, en el orden en que se cata: de la hoja seca al retrogusto. Rellena lo que notes; lo que no sepas, déjalo en blanco.",
+ falta:"Pon al menos el nombre del té.",
+ tonos:[["Amarillo pálido","#e9d98a"],["Dorado","#d9a93b"],["Ámbar","#c47a22"],["Cobrizo","#a8431b"],["Granate","#6d1d12"],["Opaco","#2b130c"]],
+ sl:[["dulzor","Dulzor"],["amargor","Amargor"],["astringencia","Astringencia"],["acidez","Acidez"],["umami","Sabroso"]],
+ ficha:[T("te","Té",{ph:"Nombre del té",list:`<option>Monsoon Jungle Oolong</option><option>Monsoon Thai Breakfast</option><option>Monsoon Dhara White</option><option>Choui Fong oolong con osmanto</option><option>Tie Guan Yin</option><option>Duck Shit Dan Cong</option><option>Dian Hong (Yunnan Gold)</option><option>Silver Needle</option><option>Moon Garden</option><option>2014 Xiaguan Wu Gu Feng Deng</option>`}),sel("tipo","Tipo",["Blanco","Verde","Oolong","Negro","Pu-erh sheng","Pu-erh shou","Otro"]),HOY,sel("metodo","Método",["Occidental","Gongfu","Vaso / cristal"],{blank:false}),num("g","Gramos",{step:.1,im:"decimal"}),num("ml","Agua (ml)",{step:10,im:"numeric"}),num("temp","Temperatura (°C)",{min:40,max:100,im:"numeric"}),T("tiempo","Tiempo",{ph:"3 min / 15 s"}),num("inf","Infusión nº",{min:1,im:"numeric",def:"1"})],
+ pasos:[
+ ["Hoja seca","Antes del agua. Mira y huele un puñado en la palma, caliéntalo con el aliento.",{c:"hoja",multi:1,o:["Entera","Rota / polvo","Enrollada","Retorcida","Prensada","Con brotes","Brillante","Mate / vieja"]},{i:"seco",l:"Aroma en seco",ph:"tostado, flor, heno, cuero…"}],
+ ["Color de la infusión","Mira la taza a contraluz, sobre fondo blanco. Elige el tono más cercano.",{tonos:1},{c:"claridad",top:1,o:["Brillante y limpio","Algo turbio","!Turbio / opaco"]}],
+ ["Aroma de la taza","Huele primero cerca y en caliente; luego, a los dos minutos. En gongfu, huele también la tapa.",{c:"notas",multi:1,o:["Floral","Fruta fresca","Fruta seca","Miel","Malta / pan","Caramelo","Tostado","Cacao","Madera","Tierra / bosque","Vegetal","Lácteo","Especiado","Ahumado","Mineral","Alcanfor"]},{i:"aroma",l:"Con tus palabras",ph:"ciruela pasa, pan tostado…"}],
+ ["En boca","Sorbo pequeño, sorbiendo aire a la vez; muévelo por toda la boca antes de tragar. 0 = nada, 5 = mucho.",{sl:1},{two:[{c:"cuerpo",l:"Cuerpo",o:["Ligero","Medio","Denso"]},{c:"textura",l:"Textura",o:["Sedosa","Cremosa","Aguada","Áspera"]}],top:1}],
+ ["Final","Traga y espera. Cuenta cuánto dura el sabor y fíjate si vuelve un dulzor a la garganta (huigan).",{two:[{c:"final",l:"Retrogusto",o:["Corto","Medio","Largo"]},{c:"huigan",l:"Huigan (dulzor que vuelve)",o:["Sí","No","No sé"]}]},{i:"finalt",l:"Qué queda",ph:"sequedad, dulce, amargo limpio…"}],
+ ["Hoja húmeda y defectos","Abre la tetera: huele la hoja mojada y mira si se ha abierto entera. Marca solo los defectos que notes claramente.",{i:"humeda",ph:"hojas enteras, olor a…"},{c:"defectos",multi:1,o:["!Plano / aguado","!Amargo agresivo","!Seca la boca","!Metálico","!Viejo / rancio","!Humedad / moho","!Papel / cartón","!Quemado","!Pescado / estanque"]}]],
+ ajuste:"+30 s, menos hoja, 5 °C menos…",l1:["fecha","tipo","metodo"],l2:[["g"," g"],["ml"," ml"],["temp"," °C"],["tiempo",""]]},
+
+vino:{n:"Vino",de:"vino",name:"nombre",lema:"Siete pasos, en el orden en que se cata: del color al final. Rellena lo que notes; lo que no sepas, déjalo en blanco.",
+ falta:"Pon al menos el nombre del vino.",
+ tonos:[["Verdoso","#dbe29c"],["Pajizo","#e8d17a"],["Dorado","#d6a437"],["Ámbar","#b8741f"],["Rosa","#eba5ab"],["Salmón","#e8a184"],["Piel de cebolla","#dfb38c"],["Púrpura","#5a1140"],["Rubí","#9c1230"],["Granate","#7d2420"],["Teja","#96452a"],["Caoba","#5a2a14"]],
+ sl:[["dulzor","Dulzor"],["acidez","Acidez"],["tanino","Tanino"],["alcohol","Alcohol"],["intensidad","Intensidad"]],
+ ficha:[T("nombre","Vino",{ph:"Nombre y bodega"}),sel("tipo","Tipo",["Blanco","Rosado","Tinto","Espumoso","Naranja","Generoso / fortificado","Dulce","Otro"]),HOY,num("anada","Añada",{min:1900,max:2100,im:"numeric"}),T("zona","Zona / D. O.",{ph:"Rioja, Jerez…"}),T("uva","Uva",{ph:"tempranillo, albariño…"}),num("grado","Alcohol (% vol)",{step:.1,im:"decimal"}),num("temp","Temperatura (°C)",{max:30,im:"numeric"}),T("aire","Aireación",{ph:"recién abierto / 30 min"})],
+ pasos:[
+ ["Color del vino","Inclina la copa sobre fondo blanco y mira el centro y el borde. Elige el tono más cercano.",{tonos:1},{c:"capa",l:"Intensidad del color",top:1,o:["Pálido","Medio","Intenso"]},{c:"aspecto",l:"Aspecto",multi:1,top:1,o:["Limpio y brillante","Algo velado","Turbio","Con posos","Con burbuja"]}],
+ ["Copa parada","Huele sin mover la copa, en inspiraciones cortas. Apunta lo primero que te venga.",{c:"fuerza",o:["Cerrado","Medio","Muy aromático"]},{i:"parada",l:"Primera impresión",ph:"fruta, alcohol, tostado, nada…"}],
+ ["Aromas al mover la copa","Gira la copa, huele, espera un momento y vuelve a oler.",{c:"notas",multi:1,o:["Cítrico","Manzana / pera","Fruta de hueso","Fruta tropical","Fruta roja","Fruta negra","Fruta pasa","Floral","Vegetal / hierba","Especias","Vainilla / coco","Tostado / humo","Pan / levadura","Mantequilla","Frutos secos","Miel","Cuero","Tierra / setas","Mineral"]},{i:"aroma",l:"Con tus palabras",ph:"ciruela, tomillo, caja de puros…"}],
+ ["En boca","Sorbo pequeño; muévelo por toda la boca y aspira un poco de aire antes de tragar o escupir. 0 = nada, 5 = mucho.",{sl:1},{two:[{c:"cuerpo",l:"Cuerpo",o:["Ligero","Medio","Con cuerpo"]},{c:"textura",l:"Textura",o:["Sedosa","Cremosa","Aguada","Áspera"]}],top:1}],
+ ["Final","Traga o escupe y cuenta cuánto dura el sabor. Fíjate en si algo sobresale demasiado.",{two:[{c:"final",l:"Persistencia",o:["Corta","Media","Larga"]},{c:"equilibrio",l:"Equilibrado",o:["Sí","No","No sé"]}]},{i:"finalt",l:"Qué queda",ph:"fruta, amargor, calor, sequedad…"}],
+ ["Evolución y defectos","Vuelve a olerlo y a probarlo a los quince o veinte minutos. Marca solo los defectos que notes claramente.",{i:"evol",ph:"se abre, se apaga, aparece…"},{c:"defectos",multi:1,o:["!Corcho (cartón mojado, moho)","!Oxidado","!Vinagre","!Pegamento / quitaesmalte","!Huevo / goma","!Cuadra / establo","!Cocido","!Ratón (tras tragar)"]}]],
+ ajuste:"más frío, abrirlo antes, con qué acompañarlo…",l1:["fecha","tipo","anada"],l2:[["zona",""],["uva",""],["grado"," % vol"],["temp"," °C"]],
+ intro:"Un vino bueno es equilibrado, limpio y largo: acidez, alcohol, dulzor y tanino se sostienen unos a otros y el sabor sigue después de tragar. Esto es lo que mirar en cada paso.",
+ guia:[
+ G("Color del vino","Da pistas de estilo y edad, no de calidad. Con los años, los blancos se oscurecen hacia el dorado y el ámbar; los tintos pierden color y van del púrpura hacia el teja, primero en el borde. La lágrima depende sobre todo del alcohol y del azúcar.","Color vivo, sea pálido o intenso, y coherente con el tipo y la edad del vino.","Marrón o apagado en un vino joven, salvo que el estilo lo pida (un oloroso, un PX). La turbidez puede ser buscada (vinos sin filtrar) y los posos en un tinto viejo son normales."),
+ G("Copa parada","Salen primero los aromas más volátiles. Si el vino está muy frío o recién abierto, puede oler a poco: espera antes de juzgarlo.","Olor limpio, aunque sea tímido.","Cartón mojado, vinagre o un golpe de alcohol antes que nada."),
+ G("Aromas al mover la copa","Tres orígenes posibles: la <b>uva</b> (fruta, flores, hierbas), la <b>elaboración</b> (pan, mantequilla, vainilla o tostado de la barrica) y el <b>tiempo</b> (cuero, setas, frutos secos). Empieza por familias; la palabra exacta llega con la práctica.","Varias capas que cambian en la copa y vuelven en boca.","Un solo olor plano, o una madera que tapa todo lo demás."),
+ G("En boca","Separa lo que notas: <b>dulzor</b>; <b>acidez</b> (hace salivar); <b>tanino</b> (seca y agarra en las encías, sobre todo en tintos); <b>alcohol</b> (calor); <b>intensidad</b> (cuánto sabor tiene en conjunto) y <b>cuerpo</b> (el peso del líquido, de agua a leche).","Frescura suficiente para pedir otro sorbo; el tanino se nota, pero no raspa.","Alcohol que quema, acidez que pincha o tanino verde y áspero."),
+ G("Final","Cuenta los segundos que dura el sabor, no el calor del alcohol ni la sequedad.","Final largo y limpio, con los mismos aromas de la nariz o alguno nuevo.","El sabor desaparece al tragar, o solo quedan amargor y calor."),
+ G("Evolución y defectos","El aire puede abrir un vino o apagarlo. El olor a huevo o a goma (reducción) a veces se va al airearlo; el corcho (TCA) no se va. Algunos rasgos dependen del estilo: la oxidación es un defecto en un blanco joven, pero se busca en un oloroso; lo cocido es propio de un madeira, y un punto de cuadra no molesta a todo el mundo.","Mejora o se mantiene en la copa.","Cartón mojado que va a más, vinagre, establo muy marcado.")],
+ tips:["<b>Cuida la temperatura.</b> Como orientación: espumosos y dulces, de 6 a 10 °C; blancos y rosados, de 8 a 12 °C; tintos, de 14 a 18 °C, y los ligeros, algo más frescos. Muy frío, se apagan los aromas; caliente, manda el alcohol.","<b>Llena poco la copa.</b> Un tercio como mucho, para poder girarla.","<b>Compara.</b> Dos vinos de la misma uva o de la misma zona enseñan más que uno solo.","<b>Cata a ciegas.</b> La etiqueta y el precio cambian lo que notas.","<b>No adivines.</b> Si no notas algo, déjalo en blanco."]},
+
+cafe:{n:"Café",de:"café",name:"nombre",lema:"Siete pasos, en el orden en que se cata: del grano al final, ya frío. Rellena lo que notes; lo que no sepas, déjalo en blanco.",
+ falta:"Pon al menos el nombre del café.",
+ tonos:[["Ámbar","#b9702a"],["Cobrizo","#9a4a1f"],["Castaño rojizo","#743318"],["Castaño","#532814"],["Marrón oscuro","#34190e"],["Casi negro","#1a0e09"]],
+ sl:[["dulzor","Dulzor"],["acidez","Acidez"],["amargor","Amargor"],["astringencia","Astringencia"],["intensidad","Intensidad"]],
+ ficha:[T("nombre","Café",{ph:"Nombre y tostador"}),T("origen","Origen",{ph:"Etiopía, Colombia…"}),HOY,sel("proceso","Proceso",["Lavado","Natural","Honey","Fermentación especial (anaeróbico…)","Varios","Otro","No sé"]),sel("tueste","Tueste",["Claro","Medio","Oscuro","No sé"]),T("ftueste","Fecha de tueste",{t:"date"}),sel("metodo","Método",["V60 / filtro","AeroPress","Prensa francesa","Italiana (moka)","Espresso","Cold brew","Cata en taza (cupping)","Otro"]),T("molienda","Molienda",{ph:"fina, 18 clics…"}),num("g","Gramos",{step:.1,im:"decimal"}),num("ml","Agua, o bebida en espresso (ml)",{step:1,im:"numeric"}),num("temp","Temperatura (°C)",{max:100,im:"numeric"}),T("tiempo","Tiempo",{ph:"2:45 min / 28 s"})],
+ pasos:[
+ ["Grano y fragancia en seco","Mira el grano con luz natural. Muélelo y huélelo enseguida, antes del agua: el aroma se va en minutos.",{c:"grano",multi:1,o:["Uniforme","Desigual","Mate","Con aceite","!Muchos rotos","!Picado (agujeros)","!Granos negros"]},{i:"seco",l:"A qué huele",ph:"frutos secos, flor, pan tostado…"}],
+ ["Color de la infusión","Mira la taza sobre fondo blanco o, si la jarra es de cristal, a contraluz; siempre con la misma luz. Elige el tono más cercano.",{tonos:1},{c:"claridad",multi:1,top:1,o:["Transparente","Algo turbio","Opaco","Con crema"]}],
+ ["Aroma de la taza","Huele la taza recién servida y otra vez a los dos minutos. En cupping, huele también la costra al romperla, hacia los cuatro minutos.",{c:"notas",multi:1,o:["Floral","Cítrico","Fruta roja","Fruta de hueso","Fruta tropical","Fruta pasa","Vinoso","Miel","Caramelo","Chocolate","Frutos secos","Cereal / pan","Especiado","Té","Vegetal","Tabaco","Tierra / madera","Tostado","Ahumado"]},{i:"aroma",l:"Con tus palabras",ph:"bergamota, avellana, panela…"}],
+ ["En boca","Sorbe con aire, sin azúcar ni leche y sin quemarte. 0 = nada, 5 = mucho.",{sl:1},{two:[{c:"cuerpo",l:"Cuerpo",o:["Ligero","Medio","Denso"]},{c:"textura",l:"Textura",o:["Sedosa","Cremosa","Aguada","Áspera"]}],top:1}],
+ ["Final y taza fría","Traga, espera y vuelve a probarlo templado y casi frío.",{two:[{c:"final",l:"Retrogusto",o:["Corto","Medio","Largo"]},{c:"frio",l:"Al enfriar",o:["Mejora","Igual","Empeora"]}]},{i:"finalt",l:"Qué queda",ph:"cacao, dulce, ceniza, sequedad…"}],
+ ["Extracción y defectos","Piensa si el fallo viene de la receta o del grano. Marca solo los defectos que notes claramente.",{c:"extraccion",l:"Extracción",o:["Le falta","En su punto","Le sobra","No sé"]},{c:"defectos",l:"Defectos",multi:1,top:1,o:["!Agrio / punzante","!Amargo agresivo","!Seca la boca","!Plano / aguado","!Quemado / ceniza","!Rancio","!Papel / cartón","!Moho / humedad","!Patata cruda","!Medicina","!Vinagre"]}]],
+ ajuste:"moler más fino, 2 g más, menos tiempo…",l1:["fecha","origen","metodo"],l2:[["g"," g"],["ml"," ml"],["temp"," °C"],["tiempo",""]],
+ intro:"Un café bueno es dulce, limpio y equilibrado, incluso sin azúcar, y sigue gustando cuando se enfría. Esto es lo que mirar en cada paso.",
+ guia:[
+ G("Grano y fragancia en seco","El color del grano indica el tueste. Cuanto más claro, más suelen notarse el origen y la acidez; cuanto más oscuro, más suelen mandar el tostado y el amargor. El aceite en la superficie es propio de tuestes muy oscuros o de granos con tiempo. Una vez molido, el café pierde aroma enseguida.","Grano parejo, sin roturas, y olor intenso al moler.","Granos muy claros y muy oscuros mezclados, picados o negros; olor apagado, a cartón o a grasa vieja."),
+ G("Color de la infusión","No dice si está bueno: depende sobre todo del método, del tueste y de cuánto café pongas. El filtro de papel deja una taza más transparente; la prensa, más turbia; el espresso es opaco y lleva crema.","Color y transparencia propios del método.","Un café de filtro de papel muy turbio o un espresso sin nada de crema: conviene revisar la molienda y la frescura del café."),
+ G("Aroma de la taza","Empieza por familias: flores y frutas; miel, caramelo y chocolate; frutos secos y cereal; especias y tostado.","Aromas claros que luego aparecen también en boca.","Solo humo o ceniza, o un fermentado que tapa lo demás."),
+ G("En boca","No confundas <b>acidez</b> (viva, como la de una fruta madura) con <b>agrio</b> (punzante, desagradable). El <b>amargor</b> es normal si no manda. La <b>astringencia</b> no es un sabor: es sequedad. La <b>intensidad</b> es cuánto sabor tiene en conjunto. El <b>cuerpo</b> depende mucho del método: más en espresso y prensa, menos con filtro de papel.","Dulzor natural, acidez agradable y sensación limpia.","Agrio y salado, o amargo y seco."),
+ G("Final y taza fría","Con la taza muy caliente se distingue peor. Al templarse se notan mejor el dulzor, la acidez y los defectos.","Sigue dulce y limpio cuando está casi frío.","Al enfriar se vuelve agrio, áspero o sabe a ceniza."),
+ G("Extracción y defectos","Si sabe agrio, salado y corto, suele faltar extracción: muele más fino o alarga el tiempo. Si sabe amargo y seco, suele sobrar: muele más grueso o acorta el tiempo. Moho, patata cruda o medicina suelen venir del grano y no se arreglan con la receta; si sabe a moho o a medicina, descarta antes el agua y la limpieza de la cafetera.","Cambias la receta y mejora.","Cambias la receta y el agua, y el sabor raro sigue.")],
+ tips:["<b>Usa una receta de partida.</b> Para filtro, unos 60 g por litro y agua entre 90 y 96 °C.","<b>Cambia una sola cosa.</b> Empieza por la molienda, y apúntala.","<b>Mira la fecha de tueste.</b> Recién tostado suele mejorar con unos días de reposo; con los meses pierde aroma.","<b>Cuida el agua.</b> Es casi todo el café: si sabe a cloro o es muy dura, se nota.","<b>No adivines.</b> Lo que escribes tiene que ser lo que notas, no lo que pone la bolsa."]},
+
+aceite:{n:"Aceite de oliva",de:"aceite de oliva",name:"nombre",lema:"Siete pasos, en el orden en que se cata: del vaso tapado al picor de la garganta. Rellena lo que notes; lo que no sepas, déjalo en blanco.",
+ falta:"Pon al menos el nombre del aceite.",
+ tonos:[["Verde intenso","#6f7d1f"],["Verde","#98a033"],["Verde dorado","#b9ab35"],["Dorado","#d3ad36"],["Amarillo","#e6c956"],["Amarillo pálido","#efe09a"]],
+ sl:[["frutado","Frutado"],["amargo","Amargo"],["picante","Picante"],["dulzor","Dulzor"],["astringencia","Astringencia"]],
+ ficha:[T("nombre","Aceite",{ph:"Nombre y almazara"}),sel("tipo","Categoría",["Virgen extra","Virgen","Aceite de oliva","Otro"]),HOY,T("variedad","Variedad",{ph:"picual, arbequina…"}),T("zona","Zona / D. O. P.",{ph:"Jaén, Les Garrigues…"}),T("cosecha","Cosecha",{ph:"2026/27"}),T("caduca","Consumo preferente",{ph:"mes y año"}),sel("envase","Envase",["Cristal oscuro","Cristal claro","Lata","Plástico","Otro"]),num("precio","Precio (€/l)",{step:.01,im:"decimal"})],
+ pasos:[
+ ["Preparar el vaso","Un dedo de aceite en un vaso pequeño. Tápalo y caliéntalo con las manos unos minutos, hasta que esté templado.",{i:"vaso",l:"Cómo lo has servido",ph:"vaso tapado, copa, cuchara…"}],
+ ["Color","Solo para el cuaderno: el color no dice si es bueno. Míralo a través del vaso, sin destaparlo; si el vaso es oscuro, échalo al terminar en un plato blanco. Elige el tono más cercano.",{tonos:1},{c:"aspecto",multi:1,top:1,o:["Limpio","Velado / sin filtrar","Con posos"]}],
+ ["Aroma","Destapa y huele enseguida, hondo y despacio. Descansa y repite.",{c:"fruta",l:"Frutado",o:["Verde","Maduro","No sé"]},{c:"notas",l:"A qué recuerda",multi:1,top:1,o:["Hierba cortada","Hoja de olivo","Tomate / tomatera","Alcachofa","Almendra verde","Almendra","Manzana","Plátano","Cítrico","Higuera","Hierbas aromáticas","Flores","Fruta madura","Pimienta"]},{i:"aroma",l:"Con tus palabras",ph:"tomatera, plátano verde…"}],
+ ["En boca","Sorbo pequeño; repártelo por toda la boca y aspira aire entre los dientes. Puntúa el picante después de tragar. 0 = nada, 5 = mucho.",{sl:1},{two:[{c:"cuerpo",l:"Cuerpo",o:["Fluido","Medio","Denso"]},{c:"textura",l:"Sensación",o:["Limpia","Suave","Pastosa","Áspera"]}],top:1}],
+ ["Final","Traga y espera: el picor llega a la garganta unos segundos después.",{two:[{c:"final",l:"Persistencia",o:["Corta","Media","Larga"]},{c:"equilibrio",l:"Equilibrado",o:["Sí","No","No sé"]}]},{i:"finalt",l:"Qué queda",ph:"almendra, picor limpio, grasa…"}],
+ ["Uso y defectos","Piensa con qué lo tomarías. Marca solo los defectos que notes claramente.",{i:"uso",ph:"tomate, pan, pescado, guiso…"},{c:"defectos",multi:1,o:["!Rancio","!Atrojado / borras","!Moho / humedad","!Avinado / avinagrado","!Metálico","!Aceituna helada","!Cocido / quemado","!Heno / madera","!Pepino"]}]],
+ ajuste:"gastarlo antes, usarlo en crudo, otra variedad…",l1:["fecha","tipo","variedad"],l2:[["zona",""],["cosecha",""],["precio"," €/l"]],
+ intro:"Un buen virgen extra huele y sabe a aceituna fresca, sin ningún defecto, y mantiene en equilibrio frutado, amargo y picante. Esto es lo que mirar en cada paso.",
+ guia:[
+ G("Preparar el vaso","En la cata oficial se usa una copa de vidrio oscuro, tapada y templada a unos 28 °C, para que el color no influya y salgan los aromas. En casa vale un vaso pequeño tapado con la mano.","Aceite templado y tapado hasta el momento de oler.","Aceite frío, destapado desde hace rato o en un vaso con olor a detergente."),
+ G("Color","Depende de la variedad, de la madurez de la aceituna y del filtrado. Un aceite muy verde no es mejor que uno dorado.","Limpio, o velado de forma uniforme si está sin filtrar.","Posos en el fondo: con el tiempo pueden dar mal sabor."),
+ G("Aroma","El <b>frutado</b> es el olor a aceituna sana y fresca, que se nota al oler y también en boca. Si es <b>verde</b>, recuerda a hierba, hoja o tomatera; si es <b>maduro</b>, a fruta madura, plátano o almendra. La intensidad depende también de la variedad.","Huele a fresco, a planta o a fruta.","Olor a frutos secos viejos, vino, vinagre, humedad o aceituna fermentada."),
+ G("En boca","El <b>amargo</b> y el <b>picante</b> son virtudes en el aceite, no defectos: se deben sobre todo a los polifenoles. El <b>dulzor</b> no es azúcar: es la suavidad de un aceite con poco amargo y picante. La <b>astringencia</b> es sequedad, no un sabor.","Se distinguen sin taparse: frutado, amargo y picante, que suele llegar al final.","Solo grasa, sin sabor a aceituna; o un amargor que lo tapa todo."),
+ G("Final","El picor se nota en la garganta y puede hacer toser. Es una sensación, no un sabor.","Picor limpio que se va poco a poco y deja la boca fresca.","Queda una capa grasa, o un regusto a rancio."),
+ G("Uso y defectos","Un aceite intenso aguanta platos con carácter; uno suave acompaña sin tapar. El <b>rancio</b> sale por oxidación: luz, calor, aire y tiempo. El <b>moho</b> viene de la aceituna o de cómo se guardó. El <b>atrojado</b> y el <b>avinado</b>, casi siempre también; pero las borras salen de dejar el aceite sobre sus posos, y el avinado puede venir de equipos mal lavados. Para ser virgen extra, además de pasar el análisis químico, la mediana de los defectos en el panel oficial debe ser 0 y la del frutado, mayor que 0.","Ningún defecto y frutado claro.","Cualquier defecto claro en una botella que dice virgen extra.")],
+ tips:["<b>Compara variedades.</b> Una picual y una arbequina, una al lado de la otra, enseñan muchísimo.","<b>Límpiate entre aceites.</b> Un trozo de manzana y agua.","<b>Pocos cada vez.</b> Con tres o cuatro la boca se cansa.","<b>Guárdalo bien.</b> A oscuras, cerrado y lejos del fuego; una vez abierto, gástalo pronto.","<b>No adivines.</b> Si no notas algo, déjalo en blanco."]}
+};
+const LS="cata-te-v1",DR="cata-te-draft",CK="cata-te-clase";
 const $=s=>document.querySelector(s),f=$("#f");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let entries=[],editing=null,liq="",timer;
+let C="",K=null,entries=[],editing=null,tono="",timer=0;
+const mem={},de=o=>CL[o.clase]?o.clase:"te",nom=o=>o[CL[de(o)].name];
 
-$("#liq").innerHTML=LIQ.map(([n,c])=>`<button type="button" class="sw" data-v="${n}" aria-pressed="false"><i style="background:${c}"></i><span>${n}</span></button>`).join("");
-$("#sliders").innerHTML=SL.map(([k,n])=>`<div class="sl"><label for="s-${k}" style="margin:0">${n}</label><input id="s-${k}" name="${k}" type="range" min="0" max="5" value="0"><output id="o-${k}">0</output></div>`).join("");
+// ——— Formulario ———
+const inputs=p=>p.flatMap(x=>x.two?inputs(x.two):[x]);
+for(const k in CL){const c=CL[k],its=c.pasos.flatMap(p=>inputs(p.slice(2)));
+ c.groups=[...its.filter(x=>x.c).map(x=>x.c),"repetir"];
+ c.fields=[...c.ficha.map(x=>x.k),...its.filter(x=>x.i).map(x=>x.i),"ajuste","libre","nota",...c.sl.map(x=>x[0])]}
+const at=(n,v)=>v==null?"":` ${n}="${v}"`;
+const ctrl=x=>x.o?`<select id="${x.k}" name="${x.k}">${x.blank?'<option value="">—</option>':""}${x.o.map(v=>`<option>${v}</option>`).join("")}</select>`
+ :`<input id="${x.k}" name="${x.k}"${at("type",x.t)}${at("list",x.list&&"teas")}${at("placeholder",x.ph)}${at("step",x.step)}${at("min",x.min)}${at("max",x.max)}${at("inputmode",x.im)}>`;
+const chips=x=>`<div class="chips" data-g="${x.c}"${x.multi?" data-multi":""}${x.top&&!x.l?' style="margin-top:12px"':""}>${x.o.map(v=>v[0]==="!"?`<button type="button" class="chip bad" aria-pressed="false">${v.slice(1)}</button>`:`<button type="button" class="chip" aria-pressed="false">${v}</button>`).join("")}</div>`;
+function item(x,i){const c=K;
+ if(x.tonos)return`<div class="liquor" id="liq">${c.tonos.map(([n,h])=>`<button type="button" class="sw" data-v="${n}" aria-pressed="false"><i style="background:${h}"></i><span>${n}</span></button>`).join("")}</div>`;
+ if(x.sl)return`<div id="sliders">${c.sl.map(([k,n])=>`<div class="sl"><label for="s-${k}" style="margin:0">${n}</label><input id="s-${k}" name="${k}" type="range" min="0" max="5" value="0"><output id="o-${k}">0</output></div>`).join("")}</div>`;
+ if(x.two)return`<div class="grid"${x.top?' style="margin-top:12px"':""}>${x.two.map(y=>`<div><label>${y.l}</label>${chips(y)}</div>`).join("")}</div>`;
+ if(x.c)return(x.l?`<label${x.top?' style="margin-top:12px"':""}>${x.l}</label>`:"")+chips(x);
+ return x.l?`<label for="${x.i}"${i?' style="margin-top:12px"':""}>${x.l}</label><input id="${x.i}" name="${x.i}"${at("placeholder",x.ph)}>`:`<input id="${x.i}" name="${x.i}"${at("placeholder",x.ph)} style="margin-bottom:12px">`}
+function build(){
+ $("#pasos").innerHTML=`<div class="step" style="border-top:0;padding-top:0"><h3><b>·</b>Ficha</h3><div class="grid">${K.ficha.map((x,i)=>`<div${i?"":' style="grid-column:1/-1"'}><label for="${x.k}">${x.l}</label>${i?ctrl(x):ctrl(x).replace(/>$/," required>")}</div>`).join("")}</div>${K.ficha[0].list?`<datalist id="teas">${K.ficha[0].list}</datalist>`:""}</div>`
+ +K.pasos.map(([t,h,...its],i)=>`<div class="step"><h3><b>${i+1}</b>${t}</h3><p class="hint">${h}</p>${its.map(item).join("")}</div>`).join("")
+ +`<div class="step"><h3><b>7</b>Veredicto</h3><div class="score"><input id="nota" name="nota" type="range" min="1" max="10" value="6" aria-label="Nota del 1 al 10"><output id="notaO">6</output></div><div class="chips" data-g="repetir" style="margin:10px 0 12px"><button type="button" class="chip" aria-pressed="false">Lo volvería a comprar</button><button type="button" class="chip" aria-pressed="false">Quizá</button><button type="button" class="chip" aria-pressed="false">No</button></div><label for="ajuste">Ajuste para la próxima</label><input id="ajuste" name="ajuste" placeholder="${K.ajuste}" style="margin-bottom:12px"><label for="libre">Notas libres</label><textarea id="libre" name="libre"></textarea></div>`;
+ $("#v-guia").innerHTML=K.guia?`<p class="hint">${K.intro}</p>`+K.guia.map((g,i)=>`<div class="step"><h3><b>${i+1}</b>${g.t}</h3><p>${g.p}</p><div class="ok"><div><b>Buena señal</b>${g.ok}</div><div><b>Mala señal</b>${g.ko}</div></div></div>`).join("")+`<div class="step"><h3><b>7</b>Cómo catar mejor</h3><ul>${K.tips.map(t=>`<li>${t}</li>`).join("")}</ul></div>`:$("#guia-te").innerHTML;
+ $("#h").textContent="Cuaderno de cata de "+K.de;$("#lema").textContent=K.lema}
 
-const setLiq=v=>{liq=v;for(const b of document.querySelectorAll(".sw"))b.setAttribute("aria-pressed",b.dataset.v===v)};
-$("#liq").addEventListener("click",e=>{const b=e.target.closest(".sw");if(b){setLiq(liq===b.dataset.v?"":b.dataset.v);draft()}});
-for(const g of document.querySelectorAll(".chips")){for(const b of g.children)b.setAttribute("aria-pressed","false");
- g.addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const on=b.getAttribute("aria-pressed")!=="true";
-  if(!g.hasAttribute("data-multi"))for(const o of g.children)o.setAttribute("aria-pressed","false");b.setAttribute("aria-pressed",on);draft()})}
+const setTono=v=>{tono=v;for(const b of document.querySelectorAll(".sw"))b.setAttribute("aria-pressed",b.dataset.v===v)};
+f.addEventListener("click",e=>{
+ const s=e.target.closest(".sw");if(s){setTono(tono===s.dataset.v?"":s.dataset.v);draft();return}
+ const b=e.target.closest(".chip");if(!b)return;const g=b.parentElement,on=b.getAttribute("aria-pressed")!=="true";
+ if(!g.hasAttribute("data-multi"))for(const o of g.children)o.setAttribute("aria-pressed","false");b.setAttribute("aria-pressed",on);draft()});
 const chipVal=g=>[...document.querySelectorAll(`[data-g="${g}"] .chip[aria-pressed=true]`)].map(b=>b.textContent);
 const setChips=(g,vals)=>{for(const b of document.querySelectorAll(`[data-g="${g}"] .chip`))b.setAttribute("aria-pressed",(vals||[]).includes(b.textContent))};
-const GROUPS=["hoja","claridad","notas","cuerpo","textura","final","huigan","defectos","repetir"];
-const FIELDS=["te","tipo","fecha","metodo","g","ml","temp","tiempo","inf","seco","aroma","finalt","humeda","ajuste","libre","nota",...SL.map(s=>s[0])];
 
-function read(){const o={};for(const k of FIELDS)o[k]=f.elements[k].value.trim();for(const g of GROUPS)o[g]=chipVal(g);o.liquor=liq;return o}
-function fill(o){o=o||{};for(const k of FIELDS){const el=f.elements[k];el.value=o[k]??(k==="nota"?"6":el.type==="range"?"0":k==="inf"?"1":k==="metodo"?"Occidental":"")}
- if(!o.fecha)f.elements.fecha.value=new Date().toISOString().slice(0,10);
- for(const g of GROUPS)setChips(g,o[g]);setLiq(o.liquor||"");outs()}
-function outs(){$("#notaO").textContent=f.elements.nota.value;for(const[k]of SL)$("#o-"+k).textContent=f.elements[k].value}
-function draft(){clearTimeout(timer);timer=setTimeout(()=>{try{localStorage.setItem(DR,JSON.stringify({id:editing,d:read()}))}catch(e){}},400)}
+function read(){const o={};for(const k of K.fields)o[k]=f.elements[k].value.trim();for(const g of K.groups)o[g]=chipVal(g);o.liquor=tono;if(C!=="te")o.clase=C;return o}
+function fill(o){o=o||{};for(const k of K.fields){const el=f.elements[k],x=K.ficha.find(y=>y.k===k);el.value=o[k]??(k==="nota"?"6":el.type==="range"?"0":x?.def??(x?.o&&!x.blank?x.o[0]:""))}
+ if(!o.fecha)f.elements.fecha.value=hoy();
+ for(const g of K.groups)setChips(g,o[g]);setTono(o.liquor||"");outs()}
+function hoy(){const h=new Date(),p=n=>String(n).padStart(2,"0");return`${h.getFullYear()}-${p(h.getMonth()+1)}-${p(h.getDate())}`}
+function outs(){$("#notaO").textContent=f.elements.nota.value;for(const[k]of K.sl)$("#o-"+k).textContent=f.elements[k].value}
+
+// ——— Borradores: uno por clase ———
+const dk=c=>c==="te"?DR:DR+"-"+c;
+function keep(){clearTimeout(timer);timer=0;mem[C]={id:editing,d:read()};try{localStorage.setItem(dk(C),JSON.stringify(mem[C]))}catch(e){}}
+function draft(){clearTimeout(timer);timer=setTimeout(keep,400)}
+const dropDraft=()=>{clearTimeout(timer);timer=0;delete mem[C];try{localStorage.removeItem(dk(C))}catch(e){}};
 f.addEventListener("input",()=>{outs();draft()});
-
 const say=t=>{$("#msg").textContent=t};
+function setClase(c){if(c===C)return;if(C&&timer)keep();C=c;K=CL[c];editing=null;build();
+ try{localStorage.setItem(CK,c)}catch(e){}
+ let d=mem[c]||null;if(!d)try{d=JSON.parse(localStorage.getItem(dk(c))||"null")}catch(e){}
+ if(d&&d.d){editing=d.id||null;fill(d.d);say("Borrador recuperado.")}else{fill();say("")}
+ for(const b of $("#clases").children)b.setAttribute("aria-pressed",b.dataset.c===c);render()}
+$("#clases").innerHTML=Object.keys(CL).map(c=>`<button type="button" class="chip" data-c="${c}" aria-pressed="false">${CL[c].n}</button>`).join("");
+$("#clases").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(b)location.hash=b.dataset.c+"/"+vista()});
+
+// ——— Guardar ———
 const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const local=()=>{try{const a=JSON.parse(localStorage.getItem(LS)||"[]");return Array.isArray(a)?a.filter(x=>x&&x.id):[]}catch(e){return[]}};
 // Devuelve null si se ha guardado; si no, el mensaje para la página.
 const saveLocal=a=>{try{localStorage.setItem(LS,JSON.stringify(a));return null}catch(e){return e&&e.name==="QuotaExceededError"?"No queda espacio: borra alguna cata antigua.":"No se ha podido guardar. Inténtalo de nuevo."}};
-const dropDraft=()=>{clearTimeout(timer);try{localStorage.removeItem(DR)}catch(e){}};
-
-f.addEventListener("submit",e=>{e.preventDefault();const o=read();if(!o.te){f.elements.te.focus();say("Pon al menos el nombre del té.");return}
+f.addEventListener("submit",e=>{e.preventDefault();const o=read();if(!nom(o)){f.elements[K.name].focus();say(K.falta);return}
  const key=editing||id();o.creado=Date.now();
  const a=local().filter(x=>x.id!==key);a.push({...o,id:key});const err=saveLocal(a);if(err){say(err);return}
- entries=a;render();dropDraft();editing=null;fill();say("Guardada.");location.hash="catas"});
+ entries=a;render();dropDraft();editing=null;fill();say("Guardada.");location.hash=C+"/catas"});
 $("#reset").addEventListener("click",()=>{editing=null;fill();dropDraft();say("")});
 
-function asText(o){const L=[`${o.te}${o.tipo?" ("+o.tipo+")":""} — ${o.fecha||""}`,`${o.metodo||""}: ${o.g||"?"} g, ${o.ml||"?"} ml, ${o.temp||"?"} °C, ${o.tiempo||"?"}, infusión ${o.inf||1}`];
+// ——— Copiar texto ———
+function textTe(o){const L=[`${o.te}${o.tipo?" ("+o.tipo+")":""} — ${o.fecha||""}`,`${o.metodo||""}: ${o.g||"?"} g, ${o.ml||"?"} ml, ${o.temp||"?"} °C, ${o.tiempo||"?"}, infusión ${o.inf||1}`];
  const add=(n,v)=>{if(v&&(!Array.isArray(v)||v.length))L.push(`${n}: ${Array.isArray(v)?v.join(", "):v}`)};
- add("Hoja seca",[...(o.hoja||[]),o.seco].filter(Boolean));add("Licor",[o.liquor,...(o.claridad||[])].filter(Boolean));add("Aroma",[...(o.notas||[]),o.aroma].filter(Boolean));
- L.push("Boca: "+SL.map(([k,n])=>`${n.toLowerCase()} ${o[k]||0}/5`).join(", "));add("Cuerpo",[...(o.cuerpo||[]),...(o.textura||[])]);
+ add("Hoja seca",[...(o.hoja||[]),o.seco].filter(Boolean));add("Color",[o.liquor,...(o.claridad||[])].filter(Boolean));add("Aroma",[...(o.notas||[]),o.aroma].filter(Boolean));
+ L.push("Boca: "+CL.te.sl.map(([k,n])=>`${n.toLowerCase()} ${o[k]||0}/5`).join(", "));add("Cuerpo",[...(o.cuerpo||[]),...(o.textura||[])]);
  add("Final",[...(o.final||[]),o.huigan?.length?"huigan "+o.huigan[0].toLowerCase():"",o.finalt].filter(Boolean));add("Hoja húmeda",o.humeda);add("Defectos",o.defectos);
  L.push(`Nota: ${o.nota}/10${o.repetir?.length?" · "+o.repetir[0]:""}`);add("Próxima vez",o.ajuste);add("Notas",o.libre);return L.join("\n")}
+function asText(o){const c=CL[de(o)];if(c===CL.te)return textTe(o);
+ const L=[`${nom(o)} (${c.de}) — ${o.fecha||""}`],fi=c.ficha.slice(1).filter(x=>x.k!=="fecha"&&o[x.k]).map(x=>`${x.l}: ${o[x.k]}`);
+ if(fi.length)L.push(fi.join(", "));
+ for(const[t,,...its]of c.pasos){if(its.some(x=>x.sl))L.push("Boca: "+c.sl.map(([k,n])=>`${n.toLowerCase()} ${o[k]||0}/5`).join(", "));
+  const v=[];for(const x of inputs(its)){if(x.tonos&&o.liquor)v.push(o.liquor);if(x.c&&o[x.c]?.length)v.push((x.c==="defectos"?"defectos: ":x.l&&!x.multi?x.l.toLowerCase()+": ":"")+o[x.c].join(", "));if(x.i&&o[x.i])v.push(o[x.i])}
+  if(v.length)L.push(`${t}: ${v.join("; ")}`)}
+ L.push(`Nota: ${o.nota||"–"}/10${o.repetir?.length?" · "+o.repetir[0]:""}`);if(o.ajuste)L.push("Próxima vez: "+o.ajuste);if(o.libre)L.push("Notas: "+o.libre);return L.join("\n")}
 
-function render(){const a=[...entries].sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||(y.creado||0)-(x.creado||0));
+// ——— Mis catas (las de la clase elegida) ———
+function render(){const a=entries.filter(o=>de(o)===C).sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||(y.creado||0)-(x.creado||0));
  $("#count").textContent=a.length?`(${a.length})`:"";
- $("#list").innerHTML=a.length?a.map(o=>{const c=(LIQ.find(l=>l[0]===o.liquor)||[,"var(--line)"])[1];
-  return `<article class="entry" data-id="${esc(o.id)}"><span class="dot" style="background:${c}"></span><div><h3>${esc(o.te)}</h3><p>${esc([o.fecha,o.tipo,o.metodo].filter(Boolean).join(" · "))}</p><p>${esc([o.g&&o.g+" g",o.ml&&o.ml+" ml",o.temp&&o.temp+" °C",o.tiempo].filter(Boolean).join(" · "))}</p>${(o.notas||[]).length?`<p>${esc(o.notas.join(", "))}</p>`:""}</div><div class="n">${esc(o.nota||"–")}</div><div class="acts"><button class="btn" data-a="edit">Abrir</button><button class="btn" data-a="copy">Copiar texto</button><button class="btn" data-a="del">Borrar</button></div></article>`}).join("")
+ $("#list").innerHTML=a.length?a.map(o=>{const c=(K.tonos.find(l=>l[0]===o.liquor)||[,"var(--line)"])[1];
+  return `<article class="entry" data-id="${esc(o.id)}"><span class="dot" style="background:${c}"></span><div><h3>${esc(nom(o))}</h3><p>${esc(K.l1.map(k=>o[k]).filter(Boolean).join(" · "))}</p><p>${esc(K.l2.map(([k,u])=>o[k]&&o[k]+u).filter(Boolean).join(" · "))}</p>${(o.notas||[]).length?`<p>${esc(o.notas.join(", "))}</p>`:""}</div><div class="n">${esc(o.nota||"–")}</div><div class="acts"><button class="btn" data-a="edit">Abrir</button><button class="btn" data-a="copy">Copiar texto</button><button class="btn" data-a="del">Borrar</button></div></article>`}).join("")
   :`<div class="empty">Aún no hay catas guardadas. Empieza por la pestaña “Nueva cata”.</div>`}
 
 $("#list").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const k=b.closest(".entry").dataset.id,o=entries.find(x=>x.id===k);if(!o)return;
- if(b.dataset.a==="edit"){editing=k;fill(o);say("Editando una cata guardada.");location.hash="nueva"}
+ if(b.dataset.a==="edit"){clearTimeout(timer);timer=0;editing=k;fill(o);say("Editando una cata guardada.");location.hash=C+"/nueva"}
  if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(asText(o));b.textContent="Copiado"}catch(_){b.textContent="No se pudo copiar"}}
  if(b.dataset.a==="del"){if(b.dataset.c!=="1"){b.dataset.c="1";b.textContent="¿Seguro? Pulsa otra vez";return}
   const a=local().filter(x=>x.id!==k);if(saveLocal(a)){b.textContent="No se pudo borrar";return}entries=a;render()}});
 
-function route(){const v=["nueva","catas","guia"].includes(location.hash.slice(1))?location.hash.slice(1):"nueva";
- for(const s of document.querySelectorAll("main section, section"))s.hidden=s.id!=="v-"+v;
- for(const a of document.querySelectorAll("nav a"))a.toggleAttribute("aria-current",a.dataset.v===v),a.dataset.v===v&&a.setAttribute("aria-current","page")}
-addEventListener("hashchange",route);route();
-
-let d=null;try{d=JSON.parse(localStorage.getItem(DR)||"null")}catch(e){}
-if(d){editing=d.id||null;fill(d.d);say("Borrador recuperado.")}else fill();
-entries=local().map(x=>({...x}));render();
+// ——— Rutas: #clase/vista (las antiguas #nueva, #catas y #guia siguen valiendo) ———
+function vista(){const v=location.hash.slice(1).split("/").pop();return["nueva","catas","guia"].includes(v)?v:"nueva"}
+function route(){const c=location.hash.slice(1).split("/")[0],v=vista();let last=null;try{last=localStorage.getItem(CK)}catch(e){}
+ setClase(Object.hasOwn(CL,c)?c:C||(Object.hasOwn(CL,last||"")?last:"te"));
+ for(const s of document.querySelectorAll("section"))s.hidden=s.id!=="v-"+v;
+ for(const a of document.querySelectorAll("nav a")){a.href=`#${C}/${a.dataset.v}`;a.toggleAttribute("aria-current",a.dataset.v===v);a.dataset.v===v&&a.setAttribute("aria-current","page")}}
+entries=local();addEventListener("hashchange",route);route();
 
 // Si se guarda desde otra pestaña, esta se pone al día.
 addEventListener("storage",e=>{if(e.key===LS||e.key===null){entries=local();render()}});
@@ -280,18 +329,19 @@ addEventListener("storage",e=>{if(e.key===LS||e.key===null){entries=local();rend
 // Exportar e importar
 const io=t=>{$("#iomsg").textContent=t},cuantas=n=>n===1?"1 cata":n+" catas";
 $("#exp").addEventListener("click",()=>{const a=local();if(!a.length){io("Aún no hay catas que exportar.");return}
- const h=new Date(),p=n=>String(n).padStart(2,"0"),name=`cata-te-${h.getFullYear()}-${p(h.getMonth()+1)}-${p(h.getDate())}.json`;
+ const name=`cata-te-${hoy()}.json`;
  const url=URL.createObjectURL(new Blob([JSON.stringify(a,null,2)],{type:"application/json"})),l=document.createElement("a");
  l.href=url;l.download=name;document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);io(`Exportadas ${cuantas(a.length)}: ${name}`)});
 
 // Comprueba una cata importada y se queda solo con los campos conocidos. Devuelve null si no es válida.
 function check(x){if(!x||typeof x!=="object"||Array.isArray(x))return null;
  const txt=v=>typeof v==="string"||Number.isFinite(v),o={};
- if(typeof x.id!=="string"||!x.id.trim()||typeof x.te!=="string"||!x.te.trim())return null;
+ if(typeof x.id!=="string"||!x.id.trim()||(x.clase!=null&&!(typeof x.clase==="string"&&Object.hasOwn(CL,x.clase))))return null;
+ const c=CL[de(x)],name=x[c.name];if(typeof name!=="string"||!name.trim())return null;
  if(x.creado!=null&&!Number.isFinite(x.creado))return null;
- for(const k of [...FIELDS,"liquor"])if(x[k]!=null){if(!txt(x[k]))return null;o[k]=String(x[k])}
- for(const g of GROUPS){const v=x[g]??[];if(!Array.isArray(v)||v.some(t=>typeof t!=="string"))return null;o[g]=v}
- o.id=x.id;o.creado=x.creado??0;return o}
+ for(const k of [...c.fields,"liquor"])if(x[k]!=null){if(!txt(x[k]))return null;o[k]=String(x[k])}
+ for(const g of c.groups){const v=x[g]??[];if(!Array.isArray(v)||v.some(t=>typeof t!=="string"))return null;o[g]=v}
+ if(c!==CL.te)o.clase=x.clase;o.id=x.id;o.creado=x.creado??0;return o}
 function merge(text){let data;try{data=JSON.parse(text.replace(/^﻿/,""))}catch(e){return"El archivo no es un JSON válido. No se ha importado nada."}
  if(!Array.isArray(data))return"El archivo no es una copia de catas. No se ha importado nada.";
  const m=new Map(local().map(o=>[o.id,o])),antes=new Map(m);

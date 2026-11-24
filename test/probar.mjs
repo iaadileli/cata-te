@@ -38,6 +38,34 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   ok(await p.inputValue("#nota") === "6", "abrir una cata importada incompleta"); await p.fill("#te", "Editada"); await p.click("#save"); await p.waitForSelector(".entry:visible");
   a = await catas(p); ok(a.length === 3 && a.find(x => x.id === "min").te === "Editada", "editar no duplica");
   await p.locator("[data-id=min] [data-a=del]").click(); await p.locator("[data-id=min] [data-a=del]").click(); ok((await catas(p)).length === 2, "borra");
+  // Las demás clases
+  await p.goto(URL_ + "#te/nueva"); await p.fill("#te", "Borrador de té"); 
+  for (const [c, n] of [["vino", "Vino"], ["cafe", "Café"], ["aceite", "Aceite de oliva"]]) {
+    await p.locator(`#clases [data-c=${c}]`).click(); await p.waitForTimeout(80); await p.click("nav a >> nth=0"); await p.waitForSelector("#f:visible"); await p.fill("#nombre", "Prueba " + n);
+    const chips = p.locator("#pasos .chip"); for (let i = 0; i < await chips.count(); i++) await chips.nth(i).click();
+    await p.locator(".sw").nth(3).click(); for (const s of await p.locator("#sliders input").all()) await s.fill("3");
+    for (const t of await p.locator("#pasos input:not([type]):not(#nombre), #pasos textarea").all()) await t.fill("txt");
+    for (const t of await p.locator("#pasos select").all()) await t.selectOption({ index: 1 });
+    for (const t of await p.locator("#pasos input[type=number]").all()) await t.fill((await t.getAttribute("min")) === "1900" ? "2020" : "10");
+    const vacios = await p.evaluate(() => [...document.querySelectorAll("#pasos [name]")].filter(x => !x.value && x.type !== "date").map(x => x.name)); ok(!vacios.length, `${n}: todos los campos se rellenan ${vacios}`);
+    ok(await p.evaluate(() => { const i = [...document.querySelectorAll("[id]")].map(x => x.id); return new Set(i).size === i.length; }), `${n}: sin id repetidos`);
+    const bien = await p.evaluate(() => [...document.querySelectorAll("#pasos input")].every(x => x.validity.valid)); ok(bien, `${n}: campos válidos`);
+    await p.waitForTimeout(500); await p.reload(); ok(await p.inputValue("#nombre") === "Prueba " + n, `${n}: borrador propio`);
+    const antes = await p.evaluate(() => JSON.stringify(read0()), await p.evaluate(() => { window.read0 = () => [...document.querySelectorAll("#pasos [name]")].map(x => x.value); }));
+    await p.click("#save"); await p.waitForSelector(".entry:visible"); ok(await p.locator(".entry").count() === 1 && (await p.textContent("#count")) === "(1)", `${n}: guarda y lista solo las suyas`);
+    const g = (await catas(p)).find(x => x.clase === c); ok(g && g.liquor && Object.values(g).every(v => !Array.isArray(v) || v.length), `${n}: todo guardado`);
+    await p.evaluate(() => { window.__t = ""; Object.defineProperty(navigator, "clipboard", { value: { writeText: async t => { window.__t = t; } }, configurable: true }); });
+    await p.locator("[data-a=copy]").click(); await p.waitForTimeout(50); const t = await p.evaluate(() => window.__t); ok(t.startsWith("Prueba " + n) && !/undefined|\[object/.test(t), `${n}: copiar texto`); if (process.env.VER) console.log(t);
+    await p.locator("[data-a=edit]").click(); await p.waitForSelector("#f:visible"); ok(await p.evaluate(() => JSON.stringify(read0())) === antes, `${n}: abrir devuelve lo mismo`);
+    await p.click("#save"); await p.waitForSelector(".entry:visible"); ok((await catas(p)).filter(x => x.clase === c).length === 1, `${n}: editar no duplica`);
+    await p.click("nav a >> nth=2"); await p.waitForTimeout(50); ok(await p.locator("#v-guia .step").count() === 7 && (await p.textContent("h1")) === "Cuaderno de cata de " + n.toLowerCase(), `${n}: guía`);
+    for (const v of ["nueva", "guia"]) { await p.goto(URL_ + `#${c}/${v}`); await p.waitForTimeout(150); ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${n}: ${v} sin desbordes`); await p.screenshot({ path: `${out}/${nom}-${c}-${v}.png`, fullPage: true }); } }
+  const todo = await catas(p), bak = JSON.stringify(todo); const [d2] = await Promise.all([p.waitForEvent("download"), p.goto(URL_ + "#vino/catas").then(() => p.click("#exp"))]); ok(JSON.parse(fs.readFileSync(await d2.path(), "utf8")).length === 5, "exporta todas las clases");
+  ok((await imp(p, bak)).includes("0 nuevas, 0 actualizadas, 5 sin cambios"), "reimporta todas");
+  await p.evaluate(() => localStorage.removeItem("cata-te-v1")); await p.reload(); await imp(p, bak); ok(JSON.stringify((await catas(p)).map(x => Object.entries(x).sort()).sort()) === JSON.stringify(todo.map(x => Object.entries(x).sort()).sort()), "ida y vuelta sin perder datos");
+  ok((await imp(p, [{ id: "z", nombre: "z", clase: "toString" }])).includes("No se ha importado nada"), "rechaza clase desconocida");
+  await p.goto(URL_ + "#te/nueva"); await p.waitForTimeout(80); ok(await p.inputValue("#te") === "Borrador de té", "el borrador de té no se pierde al cambiar de clase"); await p.click("#reset");
+  await p.evaluate(() => localStorage.setItem("cata-te-v1", JSON.stringify(JSON.parse(localStorage.getItem("cata-te-v1")).filter(x => !x.clase)))); await p.reload();
   // Dispositivo nuevo
   const c2 = await b.newContext(), q = await c2.newPage(); await q.goto(URL_ + "#catas"); await imp(q, await p.evaluate(() => localStorage.getItem("cata-te-v1")));
   ok(await q.locator(".entry").count() === 2, "importa en un navegador vacío"); await c2.close();
@@ -51,7 +79,7 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
     await p.reload(); await p.waitForTimeout(800); console.log("   cachés:", await p.evaluate(async () => [await caches.keys(), (await (await caches.open("cata-te-v1")).keys()).map(x => new URL(x.url).pathname)]));
     ok((await p.evaluate(() => caches.keys())).includes("ajena-v1"), "no toca cachés ajenas");
     await p.evaluate(() => caches.delete("cata-te-v1")); await p.reload(); await p.waitForTimeout(1500);
-    await ctx.setOffline(true); await p.goto(URL_ + "?x=1"); ok((await p.textContent("h1")) === "Cuaderno de cata de té" && (await catas(p)).length === 2, "abre sin conexión (tras borrar la caché otra web)");
+    await ctx.setOffline(true); await p.goto(URL_ + "?x=1"); ok((await p.textContent("h1")).startsWith("Cuaderno de cata de ") && (await catas(p)).length === 2, "abre sin conexión (tras borrar la caché otra web)");
     ok(await p.evaluate(async () => (await fetch("icon.svg")).ok && (await fetch("manifest.json")).ok), "icono y manifest sin conexión"); 
     await p.click("nav a >> nth=0"); await p.fill("#te", "Sin red"); await p.click("#save"); await p.waitForTimeout(200); ok((await catas(p)).length === 3, "guarda sin conexión"); await ctx.setOffline(false);
     const cdp = await ctx.newCDPSession(p); ok(!(await cdp.send("Page.getAppManifest")).errors.length, "manifest sin errores");
@@ -64,6 +92,8 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
 // Fidelidad con el original, si se da
 if (process.env.ORIGINAL) { const b = await chromium.launch({ channel: "chromium" });
   for (const cs of ["light", "dark"]) for (const w of [390, 1100]) for (const v of ["nueva", "guia"]) { const im = [], tx = [];
-    for (const u of ["file://" + encodeURI(process.env.ORIGINAL), URL_]) { const c = await b.newContext({ colorScheme: cs, viewport: { width: w, height: 900 }, serviceWorkers: "block" }), p = await c.newPage(); await p.goto(u + "#" + v); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(700); tx.push(await p.evaluate(() => document.body.innerText)); im.push((await p.screenshot({ fullPage: true })).toString("base64")); await c.close(); }
-    ok(tx[0] === tx[1] && im[0] === im[1], `igual que el original: ${v} ${cs} ${w}`); } await b.close(); }
+    for (const u of ["file://" + encodeURI(process.env.ORIGINAL), URL_]) { const c = await b.newContext({ colorScheme: cs, viewport: { width: w, height: 5000 }, serviceWorkers: "block" }), p = await c.newPage(); await p.goto(u + "#" + v); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(300);
+      // el selector de clases es lo único nuevo (y «licor» → «infusión», que pidió Adil)
+      await p.evaluate(() => { document.querySelector("#clases")?.remove(); for (const h of document.querySelectorAll("h3")) if (h.lastChild.data === "Color del licor") h.lastChild.data = "Color de la infusión"; }); tx.push(await p.evaluate(() => document.body.innerText)); im.push((await p.screenshot()).toString("base64")); await c.close(); }
+    ok(tx[0] === tx[1], `té, texto igual que el original: ${v} ${cs} ${w}`); ok(im[0] === im[1], `té, imagen igual que el original: ${v} ${cs} ${w}`); } await b.close(); }
 srv?.close(); console.log(fallos ? `FALLOS: ${fallos}` : "TODO OK"); process.exit(fallos ? 1 : 0);
