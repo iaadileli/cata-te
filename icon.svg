@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Taza de té">
+<rect width="512" height="512" fill="#a8401a"/>
+<g fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+<path d="M196 190c-16-20 16-36 0-58M246 190c-16-20 16-36 0-58M296 190c-16-20 16-36 0-58"/>
+<path d="M346 240h14c54 0 54 78 0 78h-24"/>
+</g>
+<path fill="#fff" d="M136 222h220v54c0 64-40 98-110 98s-110-34-110-98z"/>
+<path fill="#fff" d="M118 386h256c0 14-12 22-28 22H146c-16 0-28-8-28-22z"/>
+</svg>

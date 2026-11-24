@@ -1,0 +1,11 @@
+{
+  "name": "cata-te",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "probar": "node test/probar.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.63.0"
+  }
+}
