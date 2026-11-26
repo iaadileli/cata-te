@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" data-c="">
+<script>/* Pantalla de entrada: solo si no has entrado nunca en este navegador (o saliste) y no has elegido seguir sin cuenta en esta visita */
+{const g=(s,k)=>{try{return s().getItem(k)}catch(e){return null}};if(!g(()=>localStorage,"cata-te-dueno")&&!g(()=>sessionStorage,"cata-te-sin-cuenta"))document.documentElement.dataset.entrada="1"}</script>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -114,11 +116,29 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 .cuenta .aviso{color:var(--cu);font-size:14px;font-weight:600}
 .enlace{font:inherit;font-size:14px;font-weight:600;background:none;border:0;padding:10px 4px;min-height:44px;color:var(--mute);cursor:pointer;text-decoration:underline;text-underline-offset:3px}.enlace:hover{color:var(--cu)}
 .esquina{position:absolute;top:max(10px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));font-size:14px}
+:root[data-entrada="1"] #portada,:root[data-entrada="1"] #cata{display:none!important}
+:root[data-entrada="1"] #entrada{display:flex}
+#entrada{min-height:100svh;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:620px;margin:0 auto;padding:clamp(32px,7vw,84px) max(6vw,20px)}
+#entrada .sobre{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cu);margin:0 0 22px}
+#entrada .tazas{display:flex;gap:14px;margin-bottom:26px}#entrada .tazas .puerta{padding:0;border:0;background:none;display:block}#entrada .taza{width:40px}
+#entrada h1{font-size:clamp(32px,6vw,54px);letter-spacing:-.01em}
+#entrada .lema{color:var(--mute);font-size:clamp(17px,2vw,19px);margin:14px auto 0;max-width:40ch}
+#entrada .botones{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:34px}
+#entrada .btn.pri{min-width:240px;min-height:50px;font-size:17px;border-radius:999px}
+#entrada .msg{margin:8px 0 0}#entrada .aviso{color:var(--cu);font-weight:600}
 @media(max-width:600px){.liquor{grid-template-columns:repeat(3,minmax(0,1fr))}.sl{grid-template-columns:7em minmax(0,1fr) 2em}.entry{grid-template-columns:36px minmax(0,1fr)}.entry .n{grid-column:2;text-align:left}.entry .dot{width:36px;height:36px}.cmp{font-size:13px}.cmp th,.cmp td{padding:7px 6px;min-width:0;overflow-wrap:anywhere}.cmp thead th:first-child{width:88px}.cmp tbody th{overflow-wrap:normal;font-size:12.5px}.cmp .pt{font-size:9px;letter-spacing:0}.cmp .sw2{display:block;margin:0 0 3px}.entry details{margin:0 -10px}.entry .ns{grid-column:2;text-align:left}.entry .dots{width:36px}.entry .dots i{width:16px;height:16px}}
 @media(prefers-reduced-motion:no-preference){.sw i{transition:transform .15s}.sw:hover i{transform:translateY(-2px)}}
 </style>
 </head>
 <body>
+<main id="entrada" hidden>
+<p class="sobre">Cuaderno de catas</p>
+<div class="tazas" aria-hidden="true"><span class="puerta" data-c="cafe"><svg class="taza" viewBox="0 0 64 64" aria-hidden="true"><circle class="a" cx="32" cy="32" r="32"/><circle class="b" cx="32" cy="32" r="27.5"/><circle class="c" cx="32" cy="32" r="21"/><ellipse class="d" cx="26" cy="23" rx="10" ry="6"/></svg></span><span class="puerta" data-c="te"><svg class="taza" viewBox="0 0 64 64" aria-hidden="true"><circle class="a" cx="32" cy="32" r="32"/><circle class="b" cx="32" cy="32" r="27.5"/><circle class="c" cx="32" cy="32" r="21"/><ellipse class="d" cx="26" cy="23" rx="10" ry="6"/></svg></span><span class="puerta" data-c="vino"><svg class="taza" viewBox="0 0 64 64" aria-hidden="true"><circle class="a" cx="32" cy="32" r="32"/><circle class="b" cx="32" cy="32" r="27.5"/><circle class="c" cx="32" cy="32" r="21"/><ellipse class="d" cx="26" cy="23" rx="10" ry="6"/></svg></span></div>
+<h1>Tus catas, en todos tus dispositivos</h1>
+<p class="lema">Entra con tu cuenta de Google y lo que guardes estará en el móvil, el iPad y el ordenador.</p>
+<div class="botones"><button type="button" class="btn pri" data-nube="entrar">Entrar con Google</button><button type="button" class="enlace" id="sin-cuenta">Continuar sin entrar</button></div>
+<p class="msg" id="entrada-msg">Sin entrar, las catas se quedan solo en este navegador.</p>
+</main>
 <main id="portada">
 <div class="cuenta esquina" data-corta></div>
 <p class="sobre">Cuaderno de cata</p>
@@ -419,6 +439,7 @@ $("#imp").addEventListener("click",()=>$("#impf").click());
 $("#impf").addEventListener("change",async e=>{const x=e.target.files[0];if(!x)return;
  try{io(merge(await x.text()))}catch(_){io("No se ha podido leer el archivo.")}e.target.value=""});
 
+$("#sin-cuenta").addEventListener("click",()=>{try{sessionStorage.setItem("cata-te-sin-cuenta","1")}catch(e){}delete document.documentElement.dataset.entrada;scrollTo(0,0)});
 // Lo que usa nube.js para guardar en la cuenta
 window.catasAPI={local,saveLocal,check,refrescar(){entries=local();render()},
  vaciar(){try{localStorage.removeItem(LS);for(const c in CL)localStorage.removeItem(dk(c))}catch(e){}for(const c in mem)delete mem[c];entries=[];editing=null;if(K)fill();render()}};

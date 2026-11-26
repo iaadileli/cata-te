@@ -16,9 +16,17 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   const b = await mot.launch(mot === chromium ? { channel: "chromium" } : {}), ctx = await b.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } }), p = await ctx.newPage(), errs = [];
   p.on("pageerror", e => errs.push(e.message)); p.on("dialog", d => { errs.push("diálogo " + d.message()); d.dismiss(); });
   const r = await p.goto(URL_); ok(r.status() === 200, "carga (200)");
+  // Pantalla de entrada
+  ok(await p.isVisible("#entrada") && !(await p.isVisible("#portada")) && await p.isVisible("#entrada [data-nube=entrar]"), "sin cuenta: primero sale la pantalla de entrada");
+  await p.screenshot({ path: `${out}/${nom}-entrada.png` }); await p.emulateMedia({ colorScheme: "dark" }); await p.screenshot({ path: `${out}/${nom}-entrada-oscuro.png` }); await p.emulateMedia({ colorScheme: "light" });
+  ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "entrada: sin desbordes");
+  await p.click("#sin-cuenta"); ok(await p.isVisible("#portada") && !(await p.isVisible("#entrada")), "«Continuar sin entrar» lleva a la portada");
+  await p.reload(); ok(await p.isVisible("#portada"), "en la misma visita no vuelve a salir");
+  await p.goto(URL_ + "#te/nueva"); await p.waitForTimeout(100); ok(await p.isVisible("#te"), "y se puede ir directo a una cata");
+  await p.goto(URL_); await p.waitForTimeout(100);
   // Portada
   ok(await p.isVisible("#portada") && !(await p.isVisible("#cata")) && (await p.textContent("#portada h1")) === "¿Qué vas a catar hoy?", "abre en la portada");
-  ok(JSON.stringify(await p.$$eval(".puerta h2", x => x.map(y => y.textContent))) === '["Café","Té","Vino"]' && !(await p.content()).includes("Aceite"), "portada: café, té y vino; sin aceite");
+  ok(JSON.stringify(await p.$$eval("#portada .puerta h2", x => x.map(y => y.textContent))) === '["Café","Té","Vino"]' && !(await p.content()).includes("Aceite"), "portada: café, té y vino; sin aceite");
   for (const cs of ["light", "dark"]) for (const w of [390, 1100]) { await p.emulateMedia({ colorScheme: cs }); await p.setViewportSize({ width: w, height: 844 }); await p.waitForTimeout(100);
     ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `portada ${cs} ${w}: sin desbordes`); await p.screenshot({ path: `${out}/${nom}-portada-${cs}-${w}.png`, fullPage: true }); }
   await p.emulateMedia({ colorScheme: "light" }); await p.setViewportSize({ width: 390, height: 844 });
@@ -26,7 +34,7 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
     ok(await p.evaluate(() => document.querySelector("meta[name=theme-color]").content) === fondos[c], `${c}: la barra del móvil toma su color`); }
   ok(new Set(Object.values(fondos)).size === 3, "cada cata con su fondo " + JSON.stringify(fondos));
   await p.click(".volver"); await p.waitForTimeout(80); ok(await p.isVisible("#portada"), "«Todas las catas» vuelve a la portada");
-  await p.click(".puerta[data-c=te]"); await p.waitForSelector("#te:visible"); ok(p.url().endsWith("#te/nueva"), "la tarjeta de té abre la cata de té");
+  await p.click("#portada .puerta[data-c=te]"); await p.waitForSelector("#te:visible"); ok(p.url().endsWith("#te/nueva"), "la tarjeta de té abre la cata de té");
   await p.fill("#te", "Té <b>uno</b>"); await p.fill("#g", "5"); await p.click("text=Floral"); await p.click(".sw >> nth=2");
   await p.locator("#s-dulzor").fill("4"); await p.locator("#nota").fill("8"); await p.waitForTimeout(600);
   await p.reload(); ok(await p.inputValue("#te") === "Té <b>uno</b>" && (await p.textContent("#msg")) === "Borrador recuperado.", "recupera el borrador");
@@ -72,7 +80,7 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   // Las demás clases
   await p.goto(URL_ + "#te/nueva"); await p.fill("#te", "Borrador de té"); 
   for (const [c, n] of [["vino", "Vino"], ["cafe", "Café"]]) {
-    await p.click(".volver"); await p.locator(`.puerta[data-c=${c}]`).click(); await p.waitForTimeout(80); await p.click("nav a >> nth=0"); await p.waitForSelector("#f:visible"); await p.fill("#nombre", "Prueba " + n);
+    await p.click(".volver"); await p.locator(`#portada .puerta[data-c=${c}]`).click(); await p.waitForTimeout(80); await p.click("nav a >> nth=0"); await p.waitForSelector("#f:visible"); await p.fill("#nombre", "Prueba " + n);
     const chips = p.locator("#pasos .chip"); for (let i = 0; i < await chips.count(); i++) await chips.nth(i).click();
     await p.locator(".sw").nth(3).click(); for (const s of await p.locator("#sliders input").all()) await s.fill("3");
     for (const t of await p.locator("#pasos input:not([type]):not(#nombre), #pasos textarea").all()) await t.fill("txt");
@@ -95,7 +103,7 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   ok((await imp(p, bak)).includes("0 nuevas, 0 actualizadas, 4 sin cambios"), "reimporta todas");
   await p.evaluate(() => localStorage.removeItem("cata-te-v1")); await p.reload(); await imp(p, bak); ok(JSON.stringify((await catas(p)).map(x => Object.entries(x).sort()).sort()) === JSON.stringify(todo.map(x => Object.entries(x).sort()).sort()), "ida y vuelta sin perder datos");
   ok((await imp(p, [{ id: "z", nombre: "z", clase: "toString" }])).includes("No se ha importado nada"), "rechaza clase desconocida");
-  await p.goto(URL_); await p.waitForTimeout(80); ok((await p.textContent(".puerta[data-c=vino] [data-n]")) === "1 cata", "la portada cuenta las catas");
+  await p.goto(URL_); await p.waitForTimeout(80); ok((await p.textContent("#portada .puerta[data-c=vino] [data-n]")) === "1 cata", "la portada cuenta las catas");
   // Una cata de aceite antigua no se ve, pero no se borra
   await p.evaluate(() => localStorage.setItem("cata-te-v1", JSON.stringify([...JSON.parse(localStorage.getItem("cata-te-v1")), { id: "ac", clase: "aceite", nombre: "Picual" }]))); await p.goto(URL_ + "#te/catas"); await p.reload();
   ok(!(await p.content()).includes("Picual") && (await catas(p)).some(x => x.id === "ac"), "cata de aceite antigua: oculta y conservada");
@@ -103,10 +111,10 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   await p.goto(URL_ + "#te/nueva"); await p.waitForTimeout(80); ok(await p.inputValue("#te") === "Borrador de té", "el borrador de té no se pierde al cambiar de clase"); await p.click("#reset");
   await p.evaluate(() => localStorage.setItem("cata-te-v1", JSON.stringify(JSON.parse(localStorage.getItem("cata-te-v1")).filter(x => !x.clase)))); await p.reload();
   // Dispositivo nuevo
-  const c2 = await b.newContext(), q = await c2.newPage(); await q.goto(URL_ + "#catas"); await imp(q, await p.evaluate(() => localStorage.getItem("cata-te-v1")));
+  const c2 = await b.newContext(); await c2.addInitScript(() => sessionStorage.setItem("cata-te-sin-cuenta", "1")); const q = await c2.newPage(); await q.goto(URL_ + "#catas"); await imp(q, await p.evaluate(() => localStorage.getItem("cata-te-v1")));
   ok(await q.locator(".entry").count() === 2, "importa en un navegador vacío"); await c2.close();
   // localStorage bloqueado
-  const c3 = await b.newContext(), z = await c3.newPage(), e3 = []; z.on("pageerror", e => e3.push(e.message));
+  const c3 = await b.newContext(), z = await c3.newPage(), e3 = []; await c3.addInitScript(() => sessionStorage.setItem("cata-te-sin-cuenta", "1")); z.on("pageerror", e => e3.push(e.message));
   await z.addInitScript(() => Object.defineProperty(window, "localStorage", { get() { throw new DOMException("no", "SecurityError"); } }));
   await z.goto(URL_ + "#te/nueva"); await z.fill("#te", "x"); await z.click("#save"); await z.waitForTimeout(200);
   ok(!e3.length && (await z.textContent("#msg")).startsWith("No se ha podido guardar") && await z.inputValue("#te") === "x", "sin localStorage: avisa y no pierde lo escrito"); await c3.close();
@@ -132,7 +140,11 @@ if (!process.env.URL) { console.log("Nube (simulada)"); const b = await chromium
     await p.exposeFunction("__nubeLeer", ruta => [...nube].filter(([k]) => k.startsWith(ruta + "/")).map(([, v]) => v));
     await p.exposeFunction("__nubeEscribir", (ruta, d) => { nube.set(ruta, d); });
     if (uid) await p.addInitScript(u => { window.__uid = u; }, uid); p.errs = e; return p; };
-  const mac = await disp(), movil = await disp(), dato = p => p.evaluate(() => JSON.parse(localStorage.getItem("cata-te-v1") || "[]"));
+  const nueva = await disp(); await nueva.goto(URL_); await nueva.click("#entrada [data-nube=entrar]"); await nueva.waitForTimeout(500);
+  ok(await nueva.isVisible("#portada") && !(await nueva.isVisible("#entrada")), "entrar desde la pantalla de entrada lleva a la portada");
+  await nueva.reload(); await nueva.waitForTimeout(100); ok(!(await nueva.isVisible("#entrada")), "con la sesión guardada no vuelve a salir");
+  await nueva.goto(URL_ + "#te/catas"); await nueva.click("#v-catas [data-nube=salir]"); await nueva.waitForTimeout(300); ok(await nueva.isVisible("#entrada"), "al salir vuelve la pantalla de entrada"); await nueva.context().close(); nube.clear();
+  const mac = await disp(), movil = await disp(); for (const x of [mac, movil]) await x.addInitScript(() => sessionStorage.setItem("cata-te-sin-cuenta", "1")); const dato = p => p.evaluate(() => JSON.parse(localStorage.getItem("cata-te-v1") || "[]"));
   await mac.goto(URL_ + "#te/nueva"); await mac.fill("#te", "Antes de entrar"); await mac.click("#save"); await mac.waitForSelector(".entry");
   ok(await mac.isVisible("#v-catas .cuenta [data-nube=entrar]"), "Mis catas ofrece «Entrar con Google»"); await mac.screenshot({ path: `${out}/nube-fuera.png` });
   await mac.click("#v-catas .cuenta [data-nube=entrar]"); await mac.waitForTimeout(600);
@@ -140,7 +152,7 @@ if (!process.env.URL) { console.log("Nube (simulada)"); const b = await chromium
   ok([...nube.keys()].some(k => k.startsWith("users/adil/catas/")) && nube.size === 1, "sube lo que ya había en el navegador"); await mac.screenshot({ path: `${out}/nube-dentro.png` });
   await movil.goto(URL_ + "#te/catas"); await movil.click("#v-catas .cuenta [data-nube=entrar]"); await movil.waitForTimeout(600); ok((await dato(movil)).some(x => x.te === "Antes de entrar") && await movil.locator(".entry").count() === 1, "otro dispositivo la recibe y la enseña");
   await movil.goto(URL_ + "#vino/nueva"); await movil.fill("#nombre", "Rioja del móvil"); await movil.click("#save"); await mac.waitForTimeout(700);
-  ok((await dato(mac)).some(x => x.nombre === "Rioja del móvil"), "lo guardado en el móvil llega al Mac"); await mac.goto(URL_); await mac.waitForTimeout(300); ok((await mac.textContent(".puerta[data-c=vino] [data-n]")) === "1 cata", "la portada del Mac la cuenta");
+  ok((await dato(mac)).some(x => x.nombre === "Rioja del móvil"), "lo guardado en el móvil llega al Mac"); await mac.goto(URL_); await mac.waitForTimeout(300); ok((await mac.textContent("#portada .puerta[data-c=vino] [data-n]")) === "1 cata", "la portada del Mac la cuenta");
   await mac.goto(URL_ + "#te/catas"); await mac.locator("[data-a=del]").click(); await mac.locator("[data-a=del]").click(); await movil.waitForTimeout(700);
   ok(!(await dato(movil)).some(x => x.te === "Antes de entrar") && Object.values(nube).length === 0 && [...nube.values()].some(v => v.borrado), "borrar en el Mac la borra en el móvil");
   await movil.evaluate(() => { window.__sinRed = true; }); await movil.goto(URL_ + "#te/nueva"); await movil.evaluate(() => { window.__sinRed = true; });

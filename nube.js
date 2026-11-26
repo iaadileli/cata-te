@@ -15,10 +15,12 @@ const TB = "cata-te-borradas", DU = "cata-te-dueno";
 const api = window.catasAPI;
 const ls = { get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 
-let F = null, auth = null, db = null, user = null, remotos = null, parar = null, pendiente = false, error = "";
+let cargado = false, F = null, auth = null, db = null, user = null, remotos = null, parar = null, pendiente = false, error = "";
 
 // Estado que se pinta en .cuenta (portada y «Mis catas»)
 function pintar() {
+  const em = document.getElementById("entrada-msg");
+  if (em) em.innerHTML = error ? `<span class="aviso">${esc(error)}</span>` : !F && cargado ? `<span class="aviso">Ahora no se puede entrar (¿sin conexión?). Puedes continuar sin entrar.</span>` : "Sin entrar, las catas se quedan solo en este navegador.";
   for (const el of document.querySelectorAll(".cuenta")) {
     const corta = el.dataset.corta != null;
     if (!F) { el.innerHTML = corta ? "" : `<span class="msg">Tus catas se guardan en este navegador. Exporta de vez en cuando para tener copia.</span>`; continue; }
@@ -77,8 +79,11 @@ async function salir() {
   api.vaciar(); try { localStorage.removeItem(TB); localStorage.removeItem(DU); } catch (e) {}
 }
 
-document.addEventListener("click", e => {
-  const b = e.target.closest("[data-nube=entrar],[data-nube=salir]"); if (!b || !F) return;
+let avisarListo; const listo = new Promise(r => { avisarListo = r; });
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-nube=entrar],[data-nube=salir]"); if (!b) return;
+  if (!cargado) await listo;   // si pulsas antes de que acabe de cargar Firebase, espera
+  if (!F) { error = "Ahora no se puede entrar (¿sin conexión?). Puedes continuar sin entrar."; pintar(); return; }
   b.dataset.nube === "entrar" ? entrar() : salir();
 });
 
@@ -90,6 +95,9 @@ try {
   F.getRedirectResult(auth).catch(e => { error = "No se ha podido entrar: " + (e.code || e.message); pintar(); });
   F.onAuthStateChanged(auth, u => {
     user = u;
+    // la pantalla de entrada: fuera si has entrado; vuelve si sales (salvo que hayas elegido seguir sin cuenta)
+    let sin = false; try { sin = !!sessionStorage.getItem("cata-te-sin-cuenta"); } catch (e) {}
+    if (u) delete document.documentElement.dataset.entrada; else if (!sin) document.documentElement.dataset.entrada = "1";
     if (!u) { parar?.(); parar = null; remotos = null; pintar(); return; }
     // Si este navegador tenía las catas de otra cuenta, se vacía antes de unir (esas ya están en su cuenta).
     const d = ls.get(DU, null);
@@ -101,4 +109,4 @@ try {
   window.nube = { cambio: sincronizar };
   addEventListener("storage", e => { if (e.key === TB) sincronizar(); });
 } catch (e) { F = null; console.warn("Nube no disponible", e); }
-pintar();
+cargado = true; avisarListo(); pintar();
