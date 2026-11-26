@@ -18,7 +18,7 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   const r = await p.goto(URL_); ok(r.status() === 200, "carga (200)");
   // Portada
   ok(await p.isVisible("#portada") && !(await p.isVisible("#cata")) && (await p.textContent("#portada h1")) === "¿Qué vas a catar hoy?", "abre en la portada");
-  ok(JSON.stringify(await p.$$eval(".puerta h2", x => x.map(y => y.textContent))) === '["Té","Vino","Café"]' && !(await p.content()).includes("Aceite"), "portada: té, vino y café; sin aceite");
+  ok(JSON.stringify(await p.$$eval(".puerta h2", x => x.map(y => y.textContent))) === '["Café","Té","Vino"]' && !(await p.content()).includes("Aceite"), "portada: café, té y vino; sin aceite");
   for (const cs of ["light", "dark"]) for (const w of [390, 1100]) { await p.emulateMedia({ colorScheme: cs }); await p.setViewportSize({ width: w, height: 844 }); await p.waitForTimeout(100);
     ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `portada ${cs} ${w}: sin desbordes`); await p.screenshot({ path: `${out}/${nom}-portada-${cs}-${w}.png`, fullPage: true }); }
   await p.emulateMedia({ colorScheme: "light" }); await p.setViewportSize({ width: 390, height: 844 });
