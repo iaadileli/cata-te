@@ -1,6 +1,6 @@
 # Cuaderno de cata
 
-Cuaderno para catar té, vino, café y aceite de oliva en siete pasos, con la lista de tus catas y una guía de qué buscar. Es una sola página web: no hay que registrarse y se puede instalar en el móvil y usar sin conexión.
+Cuaderno para catar té, vino y café en siete pasos. Se abre en una portada donde eliges qué catar; cada cata tiene su color, con la lista de tus catas y una guía de qué buscar. Es una sola página web: no hay que registrarse y se puede instalar en el móvil y usar sin conexión.
 
 **Página:** https://iaadileli.github.io/cata-te/
 

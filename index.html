@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-c="">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,6 +22,10 @@
 --bg:light-dark(#ffffff,#15120f);--ink:light-dark(#1d1a17,#efe9e2);--mute:light-dark(#6b645c,#a59c92);
 --line:light-dark(#e6e0d9,#332d27);--card:light-dark(#faf8f5,#1e1a16);
 --cu:light-dark(#a8401a,#e0794a);--leaf:light-dark(#3d4a30,#a9bb92);--cuSoft:light-dark(#f7e7df,#3a2318)}
+:root[data-c=""]{--bg:light-dark(#fbf9f6,#15120f)}
+:root[data-c=te]{--bg:light-dark(#f3f5ea,#13150f);--card:light-dark(#ebeee0,#1b1e16);--line:light-dark(#dfe2d4,#2f3427);--cuSoft:light-dark(#f6e6dc,#38241a)}
+:root[data-c=vino]{--bg:light-dark(#fcf5f5,#170f11);--card:light-dark(#f6eaeb,#21151a);--line:light-dark(#ecdcde,#3a252b);--cu:light-dark(#8c1d36,#e58a9d);--leaf:light-dark(#57304a,#d1a6c0);--cuSoft:light-dark(#f5e1e5,#3b1d25)}
+:root[data-c=cafe]{--bg:light-dark(#faf4ec,#16110c);--card:light-dark(#f3e9dc,#201812);--line:light-dark(#e8dccb,#3a2d21);--cu:light-dark(#7c4a22,#d9a06a);--leaf:light-dark(#4b3a2b,#cbb59a);--cuSoft:light-dark(#f1e2cf,#3a2717)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Source Sans 3",system-ui,sans-serif;overflow-x:clip}
@@ -74,18 +78,49 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 .ok div:first-child{background:color-mix(in srgb,var(--leaf) 14%,transparent)}
 .ok div:last-child{background:var(--cuSoft)}
 .ok b{display:block;margin-bottom:2px}
+.volver{display:inline-flex;align-items:center;min-height:44px;margin:-10px 0 6px;color:var(--mute);text-decoration:none;font-weight:600;font-size:15px}
+.volver:hover{color:var(--cu)}
+:root[data-c=""] #cata,:root:not([data-c=""]) #portada{display:none}
+#portada{min-height:100svh;display:flex;flex-direction:column;justify-content:center;max-width:980px;margin:0 auto;padding:clamp(32px,7vw,84px) max(5vw,18px)}
+#portada .sobre{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cu);margin:0 0 14px}
+#portada h1{font-size:clamp(40px,7.5vw,76px);letter-spacing:-.01em}
+#portada .lema{color:var(--mute);font-size:clamp(17px,2vw,20px);margin:14px 0 0;max-width:46ch}
+.puertas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:clamp(14px,2vw,22px);margin-top:clamp(30px,5vw,54px)}
+.puerta{--cu:var(--p);display:grid;grid-template-rows:auto 1fr auto;gap:10px;padding:clamp(22px,3vw,30px);border-radius:20px;background:var(--pb);border:1px solid var(--pl);color:var(--ink);text-decoration:none;position:relative;overflow:hidden}
+.puerta .taza{width:76px;height:76px;border-radius:50%;margin-bottom:10px;background:radial-gradient(circle at 50% 50%,var(--t2) 0 46%,var(--t1) 47% 60%,var(--pl) 61% 68%,transparent 69%);box-shadow:0 10px 24px -12px var(--t1)}
+.puerta h2{font-size:clamp(28px,3.4vw,34px)}
+.puerta p{margin:0;color:var(--mute);font-size:15px;max-width:30ch}
+.puerta .ir{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:14px;border-top:1px solid var(--pl);font-weight:700;color:var(--p);font-size:15px}
+.puerta .ir span:first-child{color:var(--mute);font-weight:600}
+.puerta[data-c=te]{--p:light-dark(#a8401a,#e0794a);--pb:light-dark(#f3f5ea,#13150f);--pl:light-dark(#dfe2d4,#2f3427);--t1:#c47a22;--t2:#d9a93b}
+.puerta[data-c=vino]{--p:light-dark(#8c1d36,#e58a9d);--pb:light-dark(#fcf5f5,#170f11);--pl:light-dark(#ecdcde,#3a252b);--t1:#5e0f2b;--t2:#9c1230}
+.puerta[data-c=cafe]{--p:light-dark(#7c4a22,#d9a06a);--pb:light-dark(#faf4ec,#16110c);--pl:light-dark(#e8dccb,#3a2d21);--t1:#34190e;--t2:#b9702a}
+.nota-pie{color:var(--mute);font-size:14px;margin:clamp(28px,4vw,44px) 0 0}
+@media(prefers-reduced-motion:no-preference){.puerta{transition:transform .2s,box-shadow .2s,border-color .2s}.puerta:hover{transform:translateY(-3px);box-shadow:0 18px 40px -24px var(--t1);border-color:var(--p)}}
+@media(max-width:600px){.puerta{grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto;align-items:center;column-gap:18px}.puerta .taza{width:60px;height:60px;margin:0;grid-row:1/3}.puerta .ir{grid-column:1/-1;margin-top:4px}}
 @media(max-width:600px){.liquor{grid-template-columns:repeat(3,minmax(0,1fr))}.sl{grid-template-columns:7em minmax(0,1fr) 2em}.entry{grid-template-columns:36px minmax(0,1fr)}.entry .n{grid-column:2;text-align:left}.entry .dot{width:36px;height:36px}}
 @media(prefers-reduced-motion:no-preference){.sw i{transition:transform .15s}.sw:hover i{transform:translateY(-2px)}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<main id="portada">
+<p class="sobre">Cuaderno de cata</p>
+<h1>¿Qué vas a catar hoy?</h1>
+<p class="lema">Siete pasos para pensar en lo que tienes en la taza o en la copa, mientras lo tomas con calma.</p>
+<div class="puertas" role="group" aria-label="Elige la cata">
+<a class="puerta" data-c="te" href="#te/nueva"><span class="taza" aria-hidden="true"></span><div><h2>Té</h2><p>De la hoja seca al retrogusto.</p></div><div class="ir"><span data-n="te"></span><span>Empezar ›</span></div></a>
+<a class="puerta" data-c="vino" href="#vino/nueva"><span class="taza" aria-hidden="true"></span><div><h2>Vino</h2><p>Del color de la copa al final.</p></div><div class="ir"><span data-n="vino"></span><span>Empezar ›</span></div></a>
+<a class="puerta" data-c="cafe" href="#cafe/nueva"><span class="taza" aria-hidden="true"></span><div><h2>Café</h2><p>Del grano al último sorbo, ya frío.</p></div><div class="ir"><span data-n="cafe"></span><span>Empezar ›</span></div></a>
+</div>
+<p class="nota-pie">Tus catas se guardan solo en este navegador.</p>
+</main>
+<div class="wrap" id="cata">
 <header>
+<a class="volver" href="#inicio">‹ Todas las catas</a>
 <h1 id="h">Cuaderno de cata de té</h1>
 <p id="lema">Siete pasos, en el orden en que se cata: de la hoja seca al retrogusto. Rellena lo que notes; lo que no sepas, déjalo en blanco.</p>
-<div class="chips" id="clases" role="group" aria-label="Qué vas a catar" style="margin-top:18px"></div>
 </header>
-<nav aria-label="Secciones">
+<nav aria-label="Secciones" id="pestanas">
 <a href="#nueva" data-v="nueva">Nueva cata</a>
 <a href="#catas" data-v="catas">Mis catas <span id="count"></span></a>
 <a href="#guia" data-v="guia">Qué buscar</a>
@@ -194,35 +229,12 @@ cafe:{n:"Café",de:"café",name:"nombre",lema:"Siete pasos, en el orden en que s
  G("Final y taza fría","Con la taza muy caliente se distingue peor. Al templarse se notan mejor el dulzor, la acidez y los defectos.","Sigue dulce y limpio cuando está casi frío.","Al enfriar se vuelve agrio, áspero o sabe a ceniza."),
  G("Extracción y defectos","Si sabe agrio, salado y corto, suele faltar extracción: muele más fino o alarga el tiempo. Si sabe amargo y seco, suele sobrar: muele más grueso o acorta el tiempo. Moho, patata cruda o medicina suelen venir del grano y no se arreglan con la receta; si sabe a moho o a medicina, descarta antes el agua y la limpieza de la cafetera.","Cambias la receta y mejora.","Cambias la receta y el agua, y el sabor raro sigue.")],
  tips:["<b>Usa una receta de partida.</b> Para filtro, unos 60 g por litro y agua entre 90 y 96 °C.","<b>Cambia una sola cosa.</b> Empieza por la molienda, y apúntala.","<b>Mira la fecha de tueste.</b> Recién tostado suele mejorar con unos días de reposo; con los meses pierde aroma.","<b>Cuida el agua.</b> Es casi todo el café: si sabe a cloro o es muy dura, se nota.","<b>No adivines.</b> Lo que escribes tiene que ser lo que notas, no lo que pone la bolsa."]},
-
-aceite:{n:"Aceite de oliva",de:"aceite de oliva",name:"nombre",lema:"Siete pasos, en el orden en que se cata: del vaso tapado al picor de la garganta. Rellena lo que notes; lo que no sepas, déjalo en blanco.",
- falta:"Pon al menos el nombre del aceite.",
- tonos:[["Verde intenso","#6f7d1f"],["Verde","#98a033"],["Verde dorado","#b9ab35"],["Dorado","#d3ad36"],["Amarillo","#e6c956"],["Amarillo pálido","#efe09a"]],
- sl:[["frutado","Frutado"],["amargo","Amargo"],["picante","Picante"],["dulzor","Dulzor"],["astringencia","Astringencia"]],
- ficha:[T("nombre","Aceite",{ph:"Nombre y almazara"}),sel("tipo","Categoría",["Virgen extra","Virgen","Aceite de oliva","Otro"]),HOY,T("variedad","Variedad",{ph:"picual, arbequina…"}),T("zona","Zona / D. O. P.",{ph:"Jaén, Les Garrigues…"}),T("cosecha","Cosecha",{ph:"2026/27"}),T("caduca","Consumo preferente",{ph:"mes y año"}),sel("envase","Envase",["Cristal oscuro","Cristal claro","Lata","Plástico","Otro"]),num("precio","Precio (€/l)",{step:.01,im:"decimal"})],
- pasos:[
- ["Preparar el vaso","Un dedo de aceite en un vaso pequeño. Tápalo y caliéntalo con las manos unos minutos, hasta que esté templado.",{i:"vaso",l:"Cómo lo has servido",ph:"vaso tapado, copa, cuchara…"}],
- ["Color","Solo para el cuaderno: el color no dice si es bueno. Míralo a través del vaso, sin destaparlo; si el vaso es oscuro, échalo al terminar en un plato blanco. Elige el tono más cercano.",{tonos:1},{c:"aspecto",multi:1,top:1,o:["Limpio","Velado / sin filtrar","Con posos"]}],
- ["Aroma","Destapa y huele enseguida, hondo y despacio. Descansa y repite.",{c:"fruta",l:"Frutado",o:["Verde","Maduro","No sé"]},{c:"notas",l:"A qué recuerda",multi:1,top:1,o:["Hierba cortada","Hoja de olivo","Tomate / tomatera","Alcachofa","Almendra verde","Almendra","Manzana","Plátano","Cítrico","Higuera","Hierbas aromáticas","Flores","Fruta madura","Pimienta"]},{i:"aroma",l:"Con tus palabras",ph:"tomatera, plátano verde…"}],
- ["En boca","Sorbo pequeño; repártelo por toda la boca y aspira aire entre los dientes. Puntúa el picante después de tragar. 0 = nada, 5 = mucho.",{sl:1},{two:[{c:"cuerpo",l:"Cuerpo",o:["Fluido","Medio","Denso"]},{c:"textura",l:"Sensación",o:["Limpia","Suave","Pastosa","Áspera"]}],top:1}],
- ["Final","Traga y espera: el picor llega a la garganta unos segundos después.",{two:[{c:"final",l:"Persistencia",o:["Corta","Media","Larga"]},{c:"equilibrio",l:"Equilibrado",o:["Sí","No","No sé"]}]},{i:"finalt",l:"Qué queda",ph:"almendra, picor limpio, grasa…"}],
- ["Uso y defectos","Piensa con qué lo tomarías. Marca solo los defectos que notes claramente.",{i:"uso",ph:"tomate, pan, pescado, guiso…"},{c:"defectos",multi:1,o:["!Rancio","!Atrojado / borras","!Moho / humedad","!Avinado / avinagrado","!Metálico","!Aceituna helada","!Cocido / quemado","!Heno / madera","!Pepino"]}]],
- ajuste:"gastarlo antes, usarlo en crudo, otra variedad…",l1:["fecha","tipo","variedad"],l2:[["zona",""],["cosecha",""],["precio"," €/l"]],
- intro:"Un buen virgen extra huele y sabe a aceituna fresca, sin ningún defecto, y mantiene en equilibrio frutado, amargo y picante. Esto es lo que mirar en cada paso.",
- guia:[
- G("Preparar el vaso","En la cata oficial se usa una copa de vidrio oscuro, tapada y templada a unos 28 °C, para que el color no influya y salgan los aromas. En casa vale un vaso pequeño tapado con la mano.","Aceite templado y tapado hasta el momento de oler.","Aceite frío, destapado desde hace rato o en un vaso con olor a detergente."),
- G("Color","Depende de la variedad, de la madurez de la aceituna y del filtrado. Un aceite muy verde no es mejor que uno dorado.","Limpio, o velado de forma uniforme si está sin filtrar.","Posos en el fondo: con el tiempo pueden dar mal sabor."),
- G("Aroma","El <b>frutado</b> es el olor a aceituna sana y fresca, que se nota al oler y también en boca. Si es <b>verde</b>, recuerda a hierba, hoja o tomatera; si es <b>maduro</b>, a fruta madura, plátano o almendra. La intensidad depende también de la variedad.","Huele a fresco, a planta o a fruta.","Olor a frutos secos viejos, vino, vinagre, humedad o aceituna fermentada."),
- G("En boca","El <b>amargo</b> y el <b>picante</b> son virtudes en el aceite, no defectos: se deben sobre todo a los polifenoles. El <b>dulzor</b> no es azúcar: es la suavidad de un aceite con poco amargo y picante. La <b>astringencia</b> es sequedad, no un sabor.","Se distinguen sin taparse: frutado, amargo y picante, que suele llegar al final.","Solo grasa, sin sabor a aceituna; o un amargor que lo tapa todo."),
- G("Final","El picor se nota en la garganta y puede hacer toser. Es una sensación, no un sabor.","Picor limpio que se va poco a poco y deja la boca fresca.","Queda una capa grasa, o un regusto a rancio."),
- G("Uso y defectos","Un aceite intenso aguanta platos con carácter; uno suave acompaña sin tapar. El <b>rancio</b> sale por oxidación: luz, calor, aire y tiempo. El <b>moho</b> viene de la aceituna o de cómo se guardó. El <b>atrojado</b> y el <b>avinado</b>, casi siempre también; pero las borras salen de dejar el aceite sobre sus posos, y el avinado puede venir de equipos mal lavados. Para ser virgen extra, además de pasar el análisis químico, la mediana de los defectos en el panel oficial debe ser 0 y la del frutado, mayor que 0.","Ningún defecto y frutado claro.","Cualquier defecto claro en una botella que dice virgen extra.")],
- tips:["<b>Compara variedades.</b> Una picual y una arbequina, una al lado de la otra, enseñan muchísimo.","<b>Límpiate entre aceites.</b> Un trozo de manzana y agua.","<b>Pocos cada vez.</b> Con tres o cuatro la boca se cansa.","<b>Guárdalo bien.</b> A oscuras, cerrado y lejos del fuego; una vez abierto, gástalo pronto.","<b>No adivines.</b> Si no notas algo, déjalo en blanco."]}
 };
 const LS="cata-te-v1",DR="cata-te-draft",CK="cata-te-clase";
 const $=s=>document.querySelector(s),f=$("#f");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let C="",K=null,entries=[],editing=null,tono="",timer=0;
-const mem={},de=o=>CL[o.clase]?o.clase:"te",nom=o=>o[CL[de(o)].name];
+const mem={},de=o=>o.clase==null?"te":o.clase,nom=o=>o[CL[de(o)].name];
 
 // ——— Formulario ———
 const inputs=p=>p.flatMap(x=>x.two?inputs(x.two):[x]);
@@ -272,9 +284,7 @@ function setClase(c){if(c===C)return;if(C&&timer)keep();C=c;K=CL[c];editing=null
  try{localStorage.setItem(CK,c)}catch(e){}
  let d=mem[c]||null;if(!d)try{d=JSON.parse(localStorage.getItem(dk(c))||"null")}catch(e){}
  if(d&&d.d){editing=d.id||null;fill(d.d);say("Borrador recuperado.")}else{fill();say("")}
- for(const b of $("#clases").children)b.setAttribute("aria-pressed",b.dataset.c===c);render()}
-$("#clases").innerHTML=Object.keys(CL).map(c=>`<button type="button" class="chip" data-c="${c}" aria-pressed="false">${CL[c].n}</button>`).join("");
-$("#clases").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(b)location.hash=b.dataset.c+"/"+vista()});
+ render()}
 
 // ——— Guardar ———
 const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -303,7 +313,7 @@ function asText(o){const c=CL[de(o)];if(c===CL.te)return textTe(o);
  L.push(`Nota: ${o.nota||"–"}/10${o.repetir?.length?" · "+o.repetir[0]:""}`);if(o.ajuste)L.push("Próxima vez: "+o.ajuste);if(o.libre)L.push("Notas: "+o.libre);return L.join("\n")}
 
 // ——— Mis catas (las de la clase elegida) ———
-function render(){const a=entries.filter(o=>de(o)===C).sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||(y.creado||0)-(x.creado||0));
+function render(){portada();if(!K)return;const a=entries.filter(o=>de(o)===C).sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||(y.creado||0)-(x.creado||0));
  $("#count").textContent=a.length?`(${a.length})`:"";
  $("#list").innerHTML=a.length?a.map(o=>{const c=(K.tonos.find(l=>l[0]===o.liquor)||[,"var(--line)"])[1];
   return `<article class="entry" data-id="${esc(o.id)}"><span class="dot" style="background:${c}"></span><div><h3>${esc(nom(o))}</h3><p>${esc(K.l1.map(k=>o[k]).filter(Boolean).join(" · "))}</p><p>${esc(K.l2.map(([k,u])=>o[k]&&o[k]+u).filter(Boolean).join(" · "))}</p>${(o.notas||[]).length?`<p>${esc(o.notas.join(", "))}</p>`:""}</div><div class="n">${esc(o.nota||"–")}</div><div class="acts"><button class="btn" data-a="edit">Abrir</button><button class="btn" data-a="copy">Copiar texto</button><button class="btn" data-a="del">Borrar</button></div></article>`}).join("")
@@ -317,10 +327,18 @@ $("#list").addEventListener("click",async e=>{const b=e.target.closest("button")
 
 // ——— Rutas: #clase/vista (las antiguas #nueva, #catas y #guia siguen valiendo) ———
 function vista(){const v=location.hash.slice(1).split("/").pop();return["nueva","catas","guia"].includes(v)?v:"nueva"}
-function route(){const c=location.hash.slice(1).split("/")[0],v=vista();let last=null;try{last=localStorage.getItem(CK)}catch(e){}
- setClase(Object.hasOwn(CL,c)?c:C||(Object.hasOwn(CL,last||"")?last:"te"));
- for(const s of document.querySelectorAll("section"))s.hidden=s.id!=="v-"+v;
- for(const a of document.querySelectorAll("nav a")){a.href=`#${C}/${a.dataset.v}`;a.toggleAttribute("aria-current",a.dataset.v===v);a.dataset.v===v&&a.setAttribute("aria-current","page")}}
+// Sin nada detrás de # (o con #inicio) se abre la portada.
+function route(){const h=location.hash.slice(1),c=h.split("/")[0],v=vista();
+ if(!h||h==="inicio"){if(C&&timer)keep();document.documentElement.dataset.c="";color();portada();scrollTo(0,0);return}
+ let last=null;try{last=localStorage.getItem(CK)}catch(e){}
+ const ant=document.documentElement.dataset.c;
+ setClase(Object.hasOwn(CL,c)?c:C||(Object.hasOwn(CL,last||"")?last:"te"));document.documentElement.dataset.c=C;color();if(ant!==C)scrollTo(0,0);
+ for(const s of document.querySelectorAll("#cata section"))s.hidden=s.id!=="v-"+v;
+ for(const a of document.querySelectorAll("#pestanas a")){a.href=`#${C}/${a.dataset.v}`;a.toggleAttribute("aria-current",a.dataset.v===v);a.dataset.v===v&&a.setAttribute("aria-current","page")}}
+// Cuántas catas hay de cada clase, en la portada.
+function portada(){for(const x of document.querySelectorAll("[data-n]")){const n=entries.filter(o=>de(o)===x.dataset.n).length;x.textContent=n?(n===1?"1 cata":n+" catas"):"Ninguna aún"}}
+// La barra del móvil toma el color de fondo de cada cata.
+function color(){const b=getComputedStyle(document.body).backgroundColor;for(const m of document.querySelectorAll('meta[name=theme-color]'))m.content=b}
 entries=local();addEventListener("hashchange",route);route();
 
 // Si se guarda desde otra pestaña, esta se pone al día.

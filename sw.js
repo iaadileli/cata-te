@@ -1,6 +1,6 @@
 // Primero la red y, si falla o tarda, la copia guardada: así las versiones nuevas llegan solas.
 // Todas las webs de iaadileli.github.io comparten las cachés: aquí solo se tocan las que empiezan por "cata-te-".
-const PRE = "cata-te-", CACHE = PRE + "v1";
+const PRE = "cata-te-", CACHE = PRE + "v2";
 const FILES = ["./", "index.html", "manifest.json", "icon.svg", "apple-touch-icon.png"];
 const load = () => caches.open(CACHE).then(c => c.addAll(FILES.map(u => new Request(u, { cache: "no-cache" }))));
 
