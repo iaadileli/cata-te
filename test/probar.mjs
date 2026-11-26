@@ -57,7 +57,15 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   await p.waitForTimeout(500); await p.reload(); ok(await p.inputValue("#inf") === "2", "la 2.ª infusión queda como borrador");
   await p.fill("#tiempo", "30 s"); await p.click("#next"); await p.waitForTimeout(100); await p.fill("#tiempo", "45 s"); await p.click("#save"); await p.waitForSelector(".entry:visible");
   const inf = (await catas(p)).filter(x => x.te === "Oolong con osmanto"); ok(JSON.stringify(inf.map(x => x.inf + x.tiempo).sort()) === '["120 s","230 s","345 s"]', "tres infusiones guardadas");
-  const orden = await p.$$eval(".entry", x => x.map(y => y.textContent).filter(t => t.includes("osmanto")).map(t => t.match(/(\d)\.ª infusión/)[1]).join("")); ok(orden === "123", "en la lista salen juntas y en orden: " + orden);
+  ok(await p.locator(".sesion").count() === 1 && await p.locator(".entry").filter({ hasText: "osmanto" }).count() === 1, "las tres infusiones salen en una sola tarjeta");
+  await p.click(".sesion summary"); const cab = await p.$$eval(".cmp thead th", x => x.map(y => y.textContent).join("|")), tiempos = await p.$$eval(".cmp tbody tr", x => x.find(r => r.querySelector("th").textContent === "Tiempo").textContent);
+  ok(cab === "|1.ª|2.ª|3.ª" && tiempos === "Tiempo20 s30 s45 s", "tabla: una columna por infusión, en orden " + cab + " " + tiempos);
+  ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "tabla: sin desbordar la página en el móvil"); await p.screenshot({ path: `${out}/${nom}-infusiones.png`, fullPage: true });
+  await p.evaluate(() => { window.__t = ""; Object.defineProperty(navigator, "clipboard", { value: { writeText: async t => { window.__t = t; } }, configurable: true }); });
+  await p.click("[data-a=copyg]"); await p.waitForTimeout(50); ok((await p.evaluate(() => window.__t)).split("infusión ").length === 4, "copiar texto: las tres infusiones");
+  await p.locator(".cmp [data-a=edit]").nth(1).click(); await p.waitForSelector("#f:visible"); ok(await p.inputValue("#inf") === "2" && await p.inputValue("#tiempo") === "30 s", "abrir la 2.ª desde la tabla");
+  await p.click("#save"); await p.waitForSelector(".sesion"); ok((await catas(p)).filter(x => x.te === "Oolong con osmanto").length === 3, "guardarla no duplica");
+  ok(await p.evaluate(() => document.querySelector(".sesion details").open), "la tabla sigue abierta al volver"); const del = p.locator(".cmp [data-a=del]").nth(2); await del.click(); await del.click(); ok((await catas(p)).filter(x => x.te === "Oolong con osmanto").length === 2 && await p.locator(".cmp thead th").count() === 3, "borrar una infusión desde la tabla (y sigue abierta)");
   await p.goto(URL_ + "#vino/nueva"); ok(!(await p.isVisible("#next")), "el botón de infusión solo sale en el té");
   await p.evaluate(() => localStorage.setItem("cata-te-v1", JSON.stringify(JSON.parse(localStorage.getItem("cata-te-v1")).filter(x => x.te !== "Oolong con osmanto"))));
   await p.goto(URL_ + "#te/catas"); await p.reload();

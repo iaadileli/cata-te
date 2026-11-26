@@ -95,7 +95,22 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 .puerta[data-c=vino]{--p:light-dark(#8c1d36,#e58a9d);--pb:light-dark(#fffcfc,#170f11);--pl:light-dark(#ede2e3,#3a252b);--t1:#5e0f2b;--t2:#9c1230}
 .puerta[data-c=cafe]{--p:light-dark(#7c4a22,#d9a06a);--pb:light-dark(#fffdf9,#16110c);--pl:light-dark(#ebe2d6,#3a2d21);--t1:#34190e;--t2:#b9702a}
 @media(prefers-reduced-motion:no-preference){.puerta{transition:transform .2s,box-shadow .2s,border-color .2s}.puerta:hover{transform:translateY(-3px);box-shadow:0 14px 30px -20px var(--t1);border-color:var(--p)}}
-@media(max-width:600px){.liquor{grid-template-columns:repeat(3,minmax(0,1fr))}.sl{grid-template-columns:7em minmax(0,1fr) 2em}.entry{grid-template-columns:36px minmax(0,1fr)}.entry .n{grid-column:2;text-align:left}.entry .dot{width:36px;height:36px}}
+.entry .dots{display:flex;flex-wrap:wrap;gap:4px;width:44px}.entry .dots i{width:20px;height:20px;border-radius:50%;box-shadow:inset 0 -3px 6px rgba(0,0,0,.2)}
+.entry .ns{font:700 18px/1.2 "Source Serif 4";color:var(--cu);text-align:right;white-space:nowrap}
+.entry details{grid-column:1/-1}.entry summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center;color:var(--cu)}
+.cmp-wrap{overflow-x:auto;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.cmp{border-collapse:collapse;width:100%;table-layout:fixed;font-size:14px;line-height:1.35}
+.cmp th,.cmp td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;min-width:96px}
+.cmp tr:last-child th,.cmp tr:last-child td{border-bottom:0}
+.cmp thead th{font-family:"Source Serif 4";font-size:16px;background:var(--card)}
+.cmp tbody th{color:var(--mute);font-weight:600;position:sticky;left:0;background:var(--bg)}
+.cmp thead th:first-child{position:sticky;left:0;width:130px}
+.cmp[data-n="4"],.cmp[data-n="5"],.cmp[data-n="6"]{min-width:640px}.cmp[data-n="7"],.cmp[data-n="8"],.cmp[data-n="9"]{min-width:900px}
+.cmp .sw2{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;box-shadow:inset 0 -2px 4px rgba(0,0,0,.2)}
+.cmp .pt{letter-spacing:1px;color:var(--cu);white-space:nowrap}.cmp .pt s{text-decoration:none;color:var(--line)}
+.cmp .nt{font:700 20px/1 "Source Serif 4";color:var(--cu)}
+.cmp .acts2{display:flex;flex-direction:column;gap:6px}.cmp .acts2 .btn{min-height:36px;padding:4px 10px;font-size:13px}
+@media(max-width:600px){.liquor{grid-template-columns:repeat(3,minmax(0,1fr))}.sl{grid-template-columns:7em minmax(0,1fr) 2em}.entry{grid-template-columns:36px minmax(0,1fr)}.entry .n{grid-column:2;text-align:left}.entry .dot{width:36px;height:36px}.cmp{font-size:13px}.cmp th,.cmp td{padding:7px 6px;min-width:0;overflow-wrap:anywhere}.cmp thead th:first-child{width:88px}.cmp tbody th{overflow-wrap:normal;font-size:12.5px}.cmp .pt{font-size:9px;letter-spacing:0}.cmp .sw2{display:block;margin:0 0 3px}.entry details{margin:0 -10px}.entry .ns{grid-column:2;text-align:left}.entry .dots{width:36px}.entry .dots i{width:16px;height:16px}}
 @media(prefers-reduced-motion:no-preference){.sw i{transition:transform .15s}.sw:hover i{transform:translateY(-2px)}}
 </style>
 </head>
@@ -316,15 +331,35 @@ function asText(o){const c=CL[de(o)];if(c===CL.te)return textTe(o);
  L.push(`Nota: ${o.nota||"–"}/10${o.repetir?.length?" · "+o.repetir[0]:""}`);if(o.ajuste)L.push("Próxima vez: "+o.ajuste);if(o.libre)L.push("Notas: "+o.libre);return L.join("\n")}
 
 // ——— Mis catas (las de la clase elegida) ———
-function render(){portada();if(!K)return;const a=entries.filter(o=>de(o)===C),gk=o=>(o.fecha||"")+"|"+nom(o),gm={};
- for(const o of a)gm[gk(o)]=Math.max(gm[gk(o)]||0,o.creado||0);
+function render(){portada();if(!K)return;const a=entries.filter(o=>de(o)===C),gk=o=>(o.fecha||"")+"|"+nom(o),gm={},gr={};
+ for(const o of a){gm[gk(o)]=Math.max(gm[gk(o)]||0,o.creado||0);(gr[gk(o)]??=[]).push(o)}
  a.sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||gm[gk(y)]-gm[gk(x)]||(C==="te"?(+x.inf||1)-(+y.inf||1):0)||(y.creado||0)-(x.creado||0));
  $("#count").textContent=a.length?`(${a.length})`:"";
- $("#list").innerHTML=a.length?a.map(o=>{const c=(K.tonos.find(l=>l[0]===o.liquor)||[,"var(--line)"])[1];
-  return `<article class="entry" data-id="${esc(o.id)}"><span class="dot" style="background:${c}"></span><div><h3>${esc(nom(o))}</h3><p>${esc(K.l1.map(k=>o[k]).filter(Boolean).join(" · "))}</p><p>${esc(K.l2.map(([k,u])=>o[k]&&o[k]+u).filter(Boolean).join(" · "))}</p>${(o.notas||[]).length?`<p>${esc(o.notas.join(", "))}</p>`:""}</div><div class="n">${esc(o.nota||"–")}</div><div class="acts"><button class="btn" data-a="edit">Abrir</button><button class="btn" data-a="copy">Copiar texto</button><button class="btn" data-a="del">Borrar</button></div></article>`}).join("")
-  :`<div class="empty">Aún no hay catas guardadas. Empieza por la pestaña “Nueva cata”.</div>`}
+ const hecho=new Set(),html=[];
+ for(const o of a){const g=gr[gk(o)];
+  if(C==="te"&&g.length>1){if(hecho.has(gk(o)))continue;hecho.add(gk(o));html.push(sesion(g.sort((x,y)=>(+x.inf||1)-(+y.inf||1)||(x.creado||0)-(y.creado||0))));continue}
+  const c=tc(o);
+  html.push(`<article class="entry" data-id="${esc(o.id)}"><span class="dot" style="background:${c}"></span><div><h3>${esc(nom(o))}</h3><p>${esc(K.l1.map(k=>o[k]).filter(Boolean).join(" · "))}</p><p>${esc(K.l2.map(([k,u])=>o[k]&&o[k]+u).filter(Boolean).join(" · "))}</p>${(o.notas||[]).length?`<p>${esc(o.notas.join(", "))}</p>`:""}</div><div class="n">${esc(o.nota||"–")}</div><div class="acts"><button class="btn" data-a="edit">Abrir</button><button class="btn" data-a="copy">Copiar texto</button><button class="btn" data-a="del">Borrar</button></div></article>`)}
+ $("#list").innerHTML=html.length?html.join(""):`<div class="empty">Aún no hay catas guardadas. Empieza por la pestaña “Nueva cata”.</div>`}
+const tc=o=>(K.tonos.find(l=>l[0]===o.liquor)||[,"var(--line)"])[1];
+// Un té con varias infusiones el mismo día: una tarjeta con la tabla que las compara.
+const abiertas=new Set();
+function sesion(g){const o=g[0],k=g.map(x=>x.id).join(","),J=v=>esc((v||[]).join(", "));
+ const filas=[["Tiempo",x=>esc(x.tiempo)],["Color",x=>x.liquor?`<span class="sw2" style="background:${tc(x)}"></span>${esc(x.liquor)}`:""],["Claridad",x=>J(x.claridad)],
+  ["Aroma",x=>esc([...(x.notas||[]),x.aroma].filter(Boolean).join(", "))],
+  ...CL.te.sl.map(([q,n])=>[n,x=>{const v=+x[q]||0;return v?`<span class="pt" title="${v} de 5">${"●".repeat(v)}<s>${"●".repeat(5-v)}</s></span>`:""}]),
+  ["Cuerpo",x=>J(x.cuerpo)],["Textura",x=>J(x.textura)],["Retrogusto",x=>J(x.final)],["Huigan",x=>J(x.huigan)],["Qué queda",x=>esc(x.finalt)],
+  ["Hoja húmeda",x=>esc(x.humeda)],["Defectos",x=>J(x.defectos)],["Nota",x=>x.nota?`<span class="nt">${esc(x.nota)}</span>`:""],["Próxima vez",x=>esc(x.ajuste)],["Notas",x=>esc(x.libre)]];
+ const cuerpo=filas.map(([n,f])=>{const v=g.map(f);return v.some(Boolean)?`<tr><th scope="row">${n}</th>${v.map(t=>`<td>${t||"–"}</td>`).join("")}</tr>`:""}).join("");
+ const pie=`<tr><th scope="row"></th>${g.map(x=>`<td><div class="acts2"><button class="btn" data-a="edit" data-id="${esc(x.id)}">Abrir</button><button class="btn" data-a="del" data-id="${esc(x.id)}">Borrar</button></div></td>`).join("")}</tr>`;
+ return `<article class="entry sesion" data-id="${esc(o.id)}" data-g="${esc(k)}"><span class="dots">${g.map(x=>`<i style="background:${tc(x)}"></i>`).join("")}</span><div><h3>${esc(nom(o))}</h3><p>${esc(K.l1.map(q=>o[q]).filter(Boolean).join(" · "))}</p><p>${esc([o.g&&o.g+" g",o.ml&&o.ml+" ml",o.temp&&o.temp+" °C",g.length+" infusiones"].filter(Boolean).join(" · "))}</p></div><div class="ns" title="Nota de cada infusión">${g.map(x=>esc(x.nota||"–")).join(" · ")}</div>
+<details${abiertas.has(k)?" open":""}><summary>Ver las ${g.length} infusiones</summary><div class="cmp-wrap"><table class="cmp" data-n="${g.length}"><thead><tr><th></th>${g.map(x=>`<th scope="col">${esc(x.inf||1)}.ª</th>`).join("")}</tr></thead><tbody>${cuerpo}${pie}</tbody></table></div></details>
+<div class="acts"><button class="btn" data-a="copyg">Copiar texto</button></div></article>`}
+$("#list").addEventListener("toggle",e=>{const d=e.target,k=d.closest(".sesion")?.dataset.g;if(k)d.open?abiertas.add(k):abiertas.delete(k)},true);
 
-$("#list").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const k=b.closest(".entry").dataset.id,o=entries.find(x=>x.id===k);if(!o)return;
+$("#list").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.id||b.closest(".entry").dataset.id,o=entries.find(x=>x.id===k);if(!o)return;
+ if(b.dataset.a==="copyg"){const g=b.closest(".sesion").dataset.g.split(",").map(i=>entries.find(x=>x.id===i)).filter(Boolean);
+  try{await navigator.clipboard.writeText(g.map(asText).join("\n\n"));b.textContent="Copiado"}catch(_){b.textContent="No se pudo copiar"}}
  if(b.dataset.a==="edit"){clearTimeout(timer);timer=0;editing=k;fill(o);say("Editando una cata guardada.");location.hash=C+"/nueva"}
  if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(asText(o));b.textContent="Copiado"}catch(_){b.textContent="No se pudo copiar"}}
  if(b.dataset.a==="del"){if(b.dataset.c!=="1"){b.dataset.c="1";b.textContent="¿Seguro? Pulsa otra vez";return}
