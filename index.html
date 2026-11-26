@@ -110,12 +110,17 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 .cmp .pt{letter-spacing:1px;color:var(--cu);white-space:nowrap}.cmp .pt s{text-decoration:none;color:var(--line)}
 .cmp .nt{font:700 20px/1 "Source Serif 4";color:var(--cu)}
 .cmp .acts2{display:flex;flex-direction:column;gap:6px}.cmp .acts2 .btn{min-height:36px;padding:4px 10px;font-size:13px}
+.cuenta{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}.cuenta .btn{min-height:38px;padding:6px 14px;font-size:14px}
+.cuenta .aviso{color:var(--cu);font-size:14px;font-weight:600}
+.enlace{font:inherit;font-size:14px;font-weight:600;background:none;border:0;padding:10px 4px;min-height:44px;color:var(--mute);cursor:pointer;text-decoration:underline;text-underline-offset:3px}.enlace:hover{color:var(--cu)}
+.esquina{position:absolute;top:max(10px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));font-size:14px}
 @media(max-width:600px){.liquor{grid-template-columns:repeat(3,minmax(0,1fr))}.sl{grid-template-columns:7em minmax(0,1fr) 2em}.entry{grid-template-columns:36px minmax(0,1fr)}.entry .n{grid-column:2;text-align:left}.entry .dot{width:36px;height:36px}.cmp{font-size:13px}.cmp th,.cmp td{padding:7px 6px;min-width:0;overflow-wrap:anywhere}.cmp thead th:first-child{width:88px}.cmp tbody th{overflow-wrap:normal;font-size:12.5px}.cmp .pt{font-size:9px;letter-spacing:0}.cmp .sw2{display:block;margin:0 0 3px}.entry details{margin:0 -10px}.entry .ns{grid-column:2;text-align:left}.entry .dots{width:36px}.entry .dots i{width:16px;height:16px}}
 @media(prefers-reduced-motion:no-preference){.sw i{transition:transform .15s}.sw:hover i{transform:translateY(-2px)}}
 </style>
 </head>
 <body>
 <main id="portada">
+<div class="cuenta esquina" data-corta></div>
 <p class="sobre">Cuaderno de cata</p>
 <h1>¿Qué vas a catar hoy?</h1>
 <p class="lema">Siete pasos para pensar en lo que tienes en la taza o en la copa, mientras lo tomas con calma.</p>
@@ -152,7 +157,7 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 
 <section id="v-catas" hidden>
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" type="button" id="exp">Exportar catas</button><button class="btn" type="button" id="imp">Importar catas</button><input id="impf" type="file" accept=".json,application/json" aria-label="Archivo de catas" hidden><span class="msg" id="iomsg" role="status"></span></div>
-<p class="msg" style="margin:8px 0 18px">Tus catas se guardan en este navegador. Exporta de vez en cuando para tener copia o pasarlas a otro dispositivo.</p>
+<div class="cuenta" role="status" style="margin:10px 0 18px"><span class="msg">Tus catas se guardan en este navegador. Exporta de vez en cuando para tener copia o pasarlas a otro dispositivo.</span></div>
 <div class="list" id="list"></div></section>
 
 <section id="v-guia" class="guide" hidden></section>
@@ -306,7 +311,7 @@ const saveLocal=a=>{try{localStorage.setItem(LS,JSON.stringify(a));return null}c
 function guardar(){const o=read();if(!nom(o)){f.elements[K.name].focus();say(K.falta);return null}
  const key=editing||id();o.creado=Date.now();
  const a=local().filter(x=>x.id!==key);a.push({...o,id:key});const err=saveLocal(a);if(err){say(err);return null}
- entries=a;render();dropDraft();editing=null;return o}
+ entries=a;render();dropDraft();editing=null;window.nube?.cambio();return o}
 f.addEventListener("submit",e=>{e.preventDefault();if(!guardar())return;fill();say("Guardada.");location.hash=C+"/catas"});
 // Té: guarda esta infusión y abre la siguiente del mismo té, con la ficha y la hoja seca ya puestas.
 $("#next").addEventListener("click",()=>{const o=guardar();if(!o)return;const n=(parseInt(o.inf,10)||1)+1,s={inf:String(n)};
@@ -363,7 +368,9 @@ $("#list").addEventListener("click",async e=>{const b=e.target.closest("button")
  if(b.dataset.a==="edit"){clearTimeout(timer);timer=0;editing=k;fill(o);say("Editando una cata guardada.");location.hash=C+"/nueva"}
  if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(asText(o));b.textContent="Copiado"}catch(_){b.textContent="No se pudo copiar"}}
  if(b.dataset.a==="del"){if(b.dataset.c!=="1"){b.dataset.c="1";b.textContent="¿Seguro? Pulsa otra vez";return}
-  const a=local().filter(x=>x.id!==k);if(saveLocal(a)){b.textContent="No se pudo borrar";return}entries=a;render()}});
+  const a=local().filter(x=>x.id!==k);if(saveLocal(a)){b.textContent="No se pudo borrar";return}entries=a;render();
+  // se apunta el borrado para que también desaparezca en los demás dispositivos
+  try{const t=JSON.parse(localStorage.getItem("cata-te-borradas")||"{}");t[k]=Date.now();localStorage.setItem("cata-te-borradas",JSON.stringify(t))}catch(_){}window.nube?.cambio()}});
 
 // ——— Rutas: #clase/vista (las antiguas #nueva, #catas y #guia siguen valiendo) ———
 function vista(){const v=location.hash.slice(1).split("/").pop();return["nueva","catas","guia"].includes(v)?v:"nueva"}
@@ -376,7 +383,7 @@ function route(){const h=location.hash.slice(1),c=h.split("/")[0],v=vista();
  for(const s of document.querySelectorAll("#cata section"))s.hidden=s.id!=="v-"+v;
  for(const a of document.querySelectorAll("#pestanas a")){a.href=`#${C}/${a.dataset.v}`;a.toggleAttribute("aria-current",a.dataset.v===v);a.dataset.v===v&&a.setAttribute("aria-current","page")}}
 // Cuántas catas hay de cada clase, en la portada.
-function portada(){for(const x of document.querySelectorAll("[data-n]")){const n=entries.filter(o=>de(o)===x.dataset.n).length;x.textContent=n?(n===1?"1 cata":n+" catas"):"Ninguna aún"}}
+function portada(){for(const x of document.querySelectorAll(".puerta [data-n]")){const n=entries.filter(o=>de(o)===x.dataset.n).length;x.textContent=n?(n===1?"1 cata":n+" catas"):"Ninguna aún"}}
 // La barra del móvil toma el color de fondo de cada cata.
 function color(){const b=getComputedStyle(document.body).backgroundColor;for(const m of document.querySelectorAll('meta[name=theme-color]'))m.content=b}
 entries=local();addEventListener("hashchange",route);route();
@@ -406,14 +413,18 @@ function merge(text){let data;try{data=JSON.parse(text.replace(/^﻿/,""))}catch
  for(let i=0;i<data.length;i++){const o=check(data[i]);if(!o)return`La cata ${i+1} del archivo no es válida. No se ha importado nada.`;
   const y=m.get(o.id);if(!y||o.creado>(y.creado||0))m.set(o.id,o)}
  let nuevas=0,act=0;for(const[k,o]of m){if(!antes.has(k))nuevas++;else if(antes.get(k)!==o)act++}
- const a=[...m.values()];if(nuevas||act){const err=saveLocal(a);if(err)return err;entries=a;render()}
+ const a=[...m.values()];if(nuevas||act){const err=saveLocal(a);if(err)return err;entries=a;render();window.nube?.cambio()}
  return`Importación hecha: ${nuevas} nuevas, ${act} actualizadas, ${new Set(data.map(x=>x.id)).size-nuevas-act} sin cambios.`}
 $("#imp").addEventListener("click",()=>$("#impf").click());
 $("#impf").addEventListener("change",async e=>{const x=e.target.files[0];if(!x)return;
  try{io(merge(await x.text()))}catch(_){io("No se ha podido leer el archivo.")}e.target.value=""});
 
+// Lo que usa nube.js para guardar en la cuenta
+window.catasAPI={local,saveLocal,check,refrescar(){entries=local();render()},
+ vaciar(){try{localStorage.removeItem(LS);for(const c in CL)localStorage.removeItem(dk(c))}catch(e){}for(const c in mem)delete mem[c];entries=[];editing=null;if(K)fill();render()}};
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
 </script>
+<script type="module" src="nube.js"></script>
 </body>
 </html>

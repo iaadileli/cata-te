@@ -112,9 +112,9 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   ok(!e3.length && (await z.textContent("#msg")).startsWith("No se ha podido guardar") && await z.inputValue("#te") === "x", "sin localStorage: avisa y no pierde lo escrito"); await c3.close();
   if (mot === chromium) {
     await p.evaluate(() => navigator.serviceWorker.ready); await p.evaluate(async () => { await caches.open("ajena-v1"); await caches.open("cata-te-v0"); });
-    await p.reload(); await p.waitForTimeout(800); console.log("   cachés:", await p.evaluate(async () => [await caches.keys(), (await (await caches.open("cata-te-v2")).keys()).map(x => new URL(x.url).pathname)]));
+    await p.reload(); await p.waitForTimeout(800); console.log("   cachés:", await p.evaluate(async () => [await caches.keys(), (await (await caches.open("cata-te-v3")).keys()).map(x => new URL(x.url).pathname)]));
     ok((await p.evaluate(() => caches.keys())).includes("ajena-v1"), "no toca cachés ajenas");
-    await p.evaluate(() => caches.delete("cata-te-v2")); await p.reload(); await p.waitForTimeout(1500);
+    await p.evaluate(() => caches.delete("cata-te-v3")); await p.reload(); await p.waitForTimeout(1500);
     await ctx.setOffline(true); await p.goto(URL_ + "?x=1#te/nueva"); ok((await p.textContent("#h")).startsWith("Cuaderno de cata de ") && (await catas(p)).length === 2, "abre sin conexión (tras borrar la caché otra web)");
     ok(await p.evaluate(async () => (await fetch("icon.svg")).ok && (await fetch("manifest.json")).ok), "icono y manifest sin conexión"); 
     await p.fill("#te", "Sin red"); await p.click("#save"); await p.waitForTimeout(200); ok((await catas(p)).length === 3, "guarda sin conexión"); await ctx.setOffline(false);
@@ -125,6 +125,33 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
     ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${cs}: sin desbordes · fondo ${await p.evaluate(() => getComputedStyle(document.body).backgroundColor)}`); }
   ok(!errs.length, "sin errores ni alert " + errs.join()); await b.close();
 }
+// Cuenta de Google (con un Firebase de mentira) — solo en local
+if (!process.env.URL) { console.log("Nube (simulada)"); const b = await chromium.launch({ channel: "chromium" }), nube = new Map(), falso = fs.readFileSync(path.join(root, "test/firebase-falso.js"), "utf8");
+  const disp = async uid => { const c = await b.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: "block" }), p = await c.newPage(), e = []; p.on("pageerror", x => e.push(x.message));
+    await c.route("**/vendor/firebase.js", r => r.fulfill({ contentType: "text/javascript", body: falso }));
+    await p.exposeFunction("__nubeLeer", ruta => [...nube].filter(([k]) => k.startsWith(ruta + "/")).map(([, v]) => v));
+    await p.exposeFunction("__nubeEscribir", (ruta, d) => { nube.set(ruta, d); });
+    if (uid) await p.addInitScript(u => { window.__uid = u; }, uid); p.errs = e; return p; };
+  const mac = await disp(), movil = await disp(), dato = p => p.evaluate(() => JSON.parse(localStorage.getItem("cata-te-v1") || "[]"));
+  await mac.goto(URL_ + "#te/nueva"); await mac.fill("#te", "Antes de entrar"); await mac.click("#save"); await mac.waitForSelector(".entry");
+  ok(await mac.isVisible("#v-catas .cuenta [data-nube=entrar]"), "Mis catas ofrece «Entrar con Google»"); await mac.screenshot({ path: `${out}/nube-fuera.png` });
+  await mac.click("#v-catas .cuenta [data-nube=entrar]"); await mac.waitForTimeout(600);
+  ok((await mac.textContent("#v-catas .cuenta")).includes("adil@gmail.com") && (await mac.textContent("#v-catas .cuenta")).includes("Sincronizado"), "al entrar: cuenta y «Sincronizado» · " + (await mac.textContent("#v-catas .cuenta")).trim());
+  ok([...nube.keys()].some(k => k.startsWith("users/adil/catas/")) && nube.size === 1, "sube lo que ya había en el navegador"); await mac.screenshot({ path: `${out}/nube-dentro.png` });
+  await movil.goto(URL_ + "#te/catas"); await movil.click("#v-catas .cuenta [data-nube=entrar]"); await movil.waitForTimeout(600); ok((await dato(movil)).some(x => x.te === "Antes de entrar") && await movil.locator(".entry").count() === 1, "otro dispositivo la recibe y la enseña");
+  await movil.goto(URL_ + "#vino/nueva"); await movil.fill("#nombre", "Rioja del móvil"); await movil.click("#save"); await mac.waitForTimeout(700);
+  ok((await dato(mac)).some(x => x.nombre === "Rioja del móvil"), "lo guardado en el móvil llega al Mac"); await mac.goto(URL_); await mac.waitForTimeout(300); ok((await mac.textContent(".puerta[data-c=vino] [data-n]")) === "1 cata", "la portada del Mac la cuenta");
+  await mac.goto(URL_ + "#te/catas"); await mac.locator("[data-a=del]").click(); await mac.locator("[data-a=del]").click(); await movil.waitForTimeout(700);
+  ok(!(await dato(movil)).some(x => x.te === "Antes de entrar") && Object.values(nube).length === 0 && [...nube.values()].some(v => v.borrado), "borrar en el Mac la borra en el móvil");
+  await movil.evaluate(() => { window.__sinRed = true; }); await movil.goto(URL_ + "#te/nueva"); await movil.evaluate(() => { window.__sinRed = true; });
+  await movil.fill("#te", "Sin cobertura"); await movil.click("#save"); await movil.waitForTimeout(400); ok(![...nube.values()].some(v => v.te === "Sin cobertura") && (await dato(movil)).some(x => x.te === "Sin cobertura"), "sin red: se guarda en el móvil y no sube");
+  await movil.evaluate(() => { window.__sinRed = false; }); await mac.waitForTimeout(800); ok((await dato(mac)).some(x => x.te === "Sin cobertura"), "al volver la red llega al Mac");
+  await mac.goto(URL_ + "#te/catas"); await mac.waitForTimeout(300); await mac.click("#v-catas .cuenta [data-nube=salir]"); await mac.waitForTimeout(300);
+  ok((await dato(mac)).length === 0 && await mac.isVisible("#v-catas .cuenta [data-nube=entrar]") && nube.size >= 3, "salir vacía este navegador (todo sigue en la cuenta)");
+  await mac.evaluate(() => { window.__uid = "otra"; }); await mac.click("#v-catas .cuenta [data-nube=entrar]"); await mac.waitForTimeout(600); ok((await dato(mac)).length === 0, "otra cuenta en el mismo navegador no ve las catas de Adil");
+  await mac.goto(URL_ + "#te/nueva"); await mac.fill("#te", "De la otra"); await mac.click("#save"); await movil.waitForTimeout(600); ok(!(await dato(movil)).some(x => x.te === "De la otra"), "ni Adil ve las de la otra cuenta");
+  await movil.evaluate(() => { window.__popupFalla = "auth/popup-blocked"; }); await movil.click("#v-catas .cuenta [data-nube=salir]"); await movil.waitForTimeout(200); await movil.click("#v-catas .cuenta [data-nube=entrar]"); await movil.waitForTimeout(200); ok(await movil.evaluate(() => window.__redirect), "si el navegador bloquea la ventana, entra por redirección");
+  for (const p of [mac, movil]) ok(!p.errs.length, "sin errores " + p.errs.join()); await b.close(); }
 // Fidelidad con el original, si se da
 if (process.env.ORIGINAL) { const b = await chromium.launch({ channel: "chromium" });
   for (const cs of ["light", "dark"]) for (const w of [390, 1100]) for (const v of ["nueva", "guia"]) { const im = [], tx = [];
