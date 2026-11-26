@@ -387,7 +387,7 @@ addEventListener("storage",e=>{if(e.key===LS||e.key===null){entries=local();rend
 // Exportar e importar
 const io=t=>{$("#iomsg").textContent=t},cuantas=n=>n===1?"1 cata":n+" catas";
 $("#exp").addEventListener("click",()=>{const a=local();if(!a.length){io("Aún no hay catas que exportar.");return}
- const name=`cata-te-${hoy()}.json`;
+ const name=`cuaderno-de-catas-${hoy()}.json`;
  const url=URL.createObjectURL(new Blob([JSON.stringify(a,null,2)],{type:"application/json"})),l=document.createElement("a");
  l.href=url;l.download=name;document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);io(`Exportadas ${cuantas(a.length)}: ${name}`)});
 

@@ -6,8 +6,8 @@ import http from "node:http"; import fs from "node:fs"; import path from "node:p
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url))), out = path.join(root, "test/salida"); fs.mkdirSync(out, { recursive: true });
 const MIME = { ".html": "text/html", ".json": "application/json", ".svg": "image/svg+xml", ".js": "text/javascript", ".png": "image/png" };
 let URL_ = process.env.URL, srv, fallos = 0;
-if (!URL_) { srv = http.createServer((q, s) => { let f = path.join(root, decodeURI(q.url.split("?")[0]).replace("/cata-te/", "/")); if (f.endsWith("/")) f += "index.html";
-  fs.readFile(f, (e, d) => { s.writeHead(e ? 404 : 200, { "Content-Type": MIME[path.extname(f)] || "text/plain" }); s.end(d); }); }).listen(0); URL_ = `http://localhost:${srv.address().port}/cata-te/`; }
+if (!URL_) { srv = http.createServer((q, s) => { let f = path.join(root, decodeURI(q.url.split("?")[0]).replace(/^\/(cata-te|cuaderno-de-catas)\//, "/")); if (f.endsWith("/")) f += "index.html";
+  fs.readFile(f, (e, d) => { s.writeHead(e ? 404 : 200, { "Content-Type": MIME[path.extname(f)] || "text/plain" }); s.end(d); }); }).listen(0); URL_ = `http://localhost:${srv.address().port}/cuaderno-de-catas/`; }
 const ok = (c, t) => { console.log((c ? "  ✓ " : "  ✗ ") + t); if (!c) fallos++; };
 const catas = p => p.evaluate(() => JSON.parse(localStorage.getItem("cata-te-v1") || "[]"));
 const imp = async (p, data) => { await p.setInputFiles("#impf", { name: "x.json", mimeType: "application/json", buffer: Buffer.from(typeof data === "string" ? data : JSON.stringify(data)) }); await p.waitForTimeout(250); return p.textContent("#iomsg"); };
@@ -35,7 +35,7 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   ok(await p.locator(".entry h3 b").count() === 0, "el HTML del nombre se escapa");
   await p.reload(); ok(await p.locator(".entry").count() === 1, "sigue tras recargar");
   const [dl] = await Promise.all([p.waitForEvent("download"), p.click("#exp")]);
-  const h = new Date(), fich = `cata-te-${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, "0")}-${String(h.getDate()).padStart(2, "0")}.json`;
+  const h = new Date(), fich = `cuaderno-de-catas-${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, "0")}-${String(h.getDate()).padStart(2, "0")}.json`;
   ok(dl.suggestedFilename() === fich, "exporta " + dl.suggestedFilename());
   const exp = fs.readFileSync(await dl.path(), "utf8"); ok(JSON.stringify(JSON.parse(exp)) === JSON.stringify(a), "contenido exportado idéntico");
   ok((await imp(p, exp)).includes("0 nuevas, 0 actualizadas, 1 sin cambios") && (await catas(p)).length === 1, "reimportar no duplica");
