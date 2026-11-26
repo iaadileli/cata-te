@@ -81,13 +81,14 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 .volver{display:inline-flex;align-items:center;min-height:44px;margin:-10px 0 6px;color:var(--mute);text-decoration:none;font-weight:600;font-size:15px}
 .volver:hover{color:var(--cu)}
 :root[data-c=""] #cata,:root:not([data-c=""]) #portada{display:none}
-#portada{min-height:100svh;display:flex;flex-direction:column;justify-content:center;max-width:980px;margin:0 auto;padding:clamp(32px,7vw,84px) max(5vw,18px)}
+#portada{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:980px;margin:0 auto;padding:clamp(32px,7vw,84px) max(5vw,18px)}
 #portada .sobre{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cu);margin:0 0 14px}
 #portada h1{font-size:clamp(40px,7.5vw,76px);letter-spacing:-.01em}
-#portada .lema{color:var(--mute);font-size:clamp(17px,2vw,20px);margin:14px 0 0;max-width:46ch}
-.puertas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,18px);margin-top:clamp(28px,5vw,48px);max-width:640px}
+#portada .lema{color:var(--mute);font-size:clamp(17px,2vw,20px);margin:14px auto 0;max-width:46ch}
+.puertas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,18px);margin-top:clamp(28px,5vw,48px);width:100%;max-width:640px}
 .puerta{--cu:var(--p);display:flex;flex-direction:column;align-items:center;gap:8px;padding:clamp(16px,3vw,24px) 6px clamp(14px,2.4vw,20px);border-radius:16px;background:var(--pb);border:1px solid var(--pl);color:var(--ink);text-decoration:none;text-align:center}
-.puerta .taza{width:clamp(44px,9vw,60px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--t2) 0 46%,var(--t1) 47% 60%,var(--pl) 61% 68%,transparent 69%);box-shadow:0 8px 18px -10px var(--t1)}
+.puerta .taza{width:clamp(44px,9vw,60px);height:auto;overflow:visible;filter:drop-shadow(0 6px 8px color-mix(in srgb,var(--t1) 35%,transparent))}
+.taza .a{fill:var(--pl)}.taza .b{fill:var(--t1)}.taza .c{fill:var(--t2)}.taza .d{fill:#fff;opacity:.18}
 .puerta h2{font-size:clamp(20px,3.4vw,26px)}
 .puerta [data-n]{color:var(--mute);font-size:13px;font-weight:600}
 .puerta[data-c=te]{--p:light-dark(#a8401a,#e0794a);--pb:light-dark(#fdfefb,#13150f);--pl:light-dark(#e3e6db,#2f3427);--t1:#c47a22;--t2:#d9a93b}
@@ -104,9 +105,9 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 <h1>¿Qué vas a catar hoy?</h1>
 <p class="lema">Siete pasos para pensar en lo que tienes en la taza o en la copa, mientras lo tomas con calma.</p>
 <div class="puertas" role="group" aria-label="Elige la cata">
-<a class="puerta" data-c="cafe" href="#cafe/nueva"><span class="taza" aria-hidden="true"></span><h2>Café</h2><span data-n="cafe"></span></a>
-<a class="puerta" data-c="te" href="#te/nueva"><span class="taza" aria-hidden="true"></span><h2>Té</h2><span data-n="te"></span></a>
-<a class="puerta" data-c="vino" href="#vino/nueva"><span class="taza" aria-hidden="true"></span><h2>Vino</h2><span data-n="vino"></span></a>
+<a class="puerta" data-c="cafe" href="#cafe/nueva"><svg class="taza" viewBox="0 0 64 64" aria-hidden="true"><circle class="a" cx="32" cy="32" r="32"/><circle class="b" cx="32" cy="32" r="27.5"/><circle class="c" cx="32" cy="32" r="21"/><ellipse class="d" cx="26" cy="23" rx="10" ry="6"/></svg><h2>Café</h2><span data-n="cafe"></span></a>
+<a class="puerta" data-c="te" href="#te/nueva"><svg class="taza" viewBox="0 0 64 64" aria-hidden="true"><circle class="a" cx="32" cy="32" r="32"/><circle class="b" cx="32" cy="32" r="27.5"/><circle class="c" cx="32" cy="32" r="21"/><ellipse class="d" cx="26" cy="23" rx="10" ry="6"/></svg><h2>Té</h2><span data-n="te"></span></a>
+<a class="puerta" data-c="vino" href="#vino/nueva"><svg class="taza" viewBox="0 0 64 64" aria-hidden="true"><circle class="a" cx="32" cy="32" r="32"/><circle class="b" cx="32" cy="32" r="27.5"/><circle class="c" cx="32" cy="32" r="21"/><ellipse class="d" cx="26" cy="23" rx="10" ry="6"/></svg><h2>Vino</h2><span data-n="vino"></span></a>
 </div>
 </main>
 <div class="wrap" id="cata">
@@ -127,6 +128,7 @@ input[type=range]{padding:0;border:0;accent-color:var(--cu);min-height:36px}
 
 <div class="bar">
 <button class="btn pri" type="submit" id="save">Guardar cata</button>
+<button class="btn" type="button" id="next" hidden>Guardar y siguiente infusión</button>
 <button class="btn" type="button" id="reset">Nueva en blanco</button>
 <span class="msg" id="msg"></span>
 </div>
@@ -177,7 +179,7 @@ te:{n:"Té",de:"té",name:"te",lema:"Siete pasos, en el orden en que se cata: de
  ["En boca","Sorbo pequeño, sorbiendo aire a la vez; muévelo por toda la boca antes de tragar. 0 = nada, 5 = mucho.",{sl:1},{two:[{c:"cuerpo",l:"Cuerpo",o:["Ligero","Medio","Denso"]},{c:"textura",l:"Textura",o:["Sedosa","Cremosa","Aguada","Áspera"]}],top:1}],
  ["Final","Traga y espera. Cuenta cuánto dura el sabor y fíjate si vuelve un dulzor a la garganta (huigan).",{two:[{c:"final",l:"Retrogusto",o:["Corto","Medio","Largo"]},{c:"huigan",l:"Huigan (dulzor que vuelve)",o:["Sí","No","No sé"]}]},{i:"finalt",l:"Qué queda",ph:"sequedad, dulce, amargo limpio…"}],
  ["Hoja húmeda y defectos","Abre la tetera: huele la hoja mojada y mira si se ha abierto entera. Marca solo los defectos que notes claramente.",{i:"humeda",ph:"hojas enteras, olor a…"},{c:"defectos",multi:1,o:["!Plano / aguado","!Amargo agresivo","!Seca la boca","!Metálico","!Viejo / rancio","!Humedad / moho","!Papel / cartón","!Quemado","!Pescado / estanque"]}]],
- ajuste:"+30 s, menos hoja, 5 °C menos…",l1:["fecha","tipo","metodo"],l2:[["g"," g"],["ml"," ml"],["temp"," °C"],["tiempo",""]]},
+ ajuste:"+30 s, menos hoja, 5 °C menos…",l1:["fecha","tipo","metodo"],l2:[["inf",".ª infusión"],["g"," g"],["ml"," ml"],["temp"," °C"],["tiempo",""]]},
 
 vino:{n:"Vino",de:"vino",name:"nombre",lema:"Siete pasos, en el orden en que se cata: del color al final. Rellena lo que notes; lo que no sepas, déjalo en blanco.",
  falta:"Pon al menos el nombre del vino.",
@@ -279,17 +281,23 @@ function setClase(c){if(c===C)return;if(C&&timer)keep();C=c;K=CL[c];editing=null
  try{localStorage.setItem(CK,c)}catch(e){}
  let d=mem[c]||null;if(!d)try{d=JSON.parse(localStorage.getItem(dk(c))||"null")}catch(e){}
  if(d&&d.d){editing=d.id||null;fill(d.d);say("Borrador recuperado.")}else{fill();say("")}
- render()}
+ $("#next").hidden=c!=="te";render()}
 
 // ——— Guardar ———
 const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const local=()=>{try{const a=JSON.parse(localStorage.getItem(LS)||"[]");return Array.isArray(a)?a.filter(x=>x&&x.id):[]}catch(e){return[]}};
 // Devuelve null si se ha guardado; si no, el mensaje para la página.
 const saveLocal=a=>{try{localStorage.setItem(LS,JSON.stringify(a));return null}catch(e){return e&&e.name==="QuotaExceededError"?"No queda espacio: borra alguna cata antigua.":"No se ha podido guardar. Inténtalo de nuevo."}};
-f.addEventListener("submit",e=>{e.preventDefault();const o=read();if(!nom(o)){f.elements[K.name].focus();say(K.falta);return}
+function guardar(){const o=read();if(!nom(o)){f.elements[K.name].focus();say(K.falta);return null}
  const key=editing||id();o.creado=Date.now();
- const a=local().filter(x=>x.id!==key);a.push({...o,id:key});const err=saveLocal(a);if(err){say(err);return}
- entries=a;render();dropDraft();editing=null;fill();say("Guardada.");location.hash=C+"/catas"});
+ const a=local().filter(x=>x.id!==key);a.push({...o,id:key});const err=saveLocal(a);if(err){say(err);return null}
+ entries=a;render();dropDraft();editing=null;return o}
+f.addEventListener("submit",e=>{e.preventDefault();if(!guardar())return;fill();say("Guardada.");location.hash=C+"/catas"});
+// Té: guarda esta infusión y abre la siguiente del mismo té, con la ficha y la hoja seca ya puestas.
+$("#next").addEventListener("click",()=>{const o=guardar();if(!o)return;const n=(parseInt(o.inf,10)||1)+1,s={inf:String(n)};
+ for(const k of["te","tipo","fecha","metodo","g","ml","temp","seco","hoja"])s[k]=o[k];
+ fill(s);draft();say(`Guardada la ${n-1}.ª infusión. Esta es la ${n}.ª: apunta el tiempo y cata otra vez.`);
+ const t=f.elements.tiempo;t.scrollIntoView({block:"center"});t.focus({preventScroll:true})});
 $("#reset").addEventListener("click",()=>{editing=null;fill();dropDraft();say("")});
 
 // ——— Copiar texto ———
@@ -308,7 +316,9 @@ function asText(o){const c=CL[de(o)];if(c===CL.te)return textTe(o);
  L.push(`Nota: ${o.nota||"–"}/10${o.repetir?.length?" · "+o.repetir[0]:""}`);if(o.ajuste)L.push("Próxima vez: "+o.ajuste);if(o.libre)L.push("Notas: "+o.libre);return L.join("\n")}
 
 // ——— Mis catas (las de la clase elegida) ———
-function render(){portada();if(!K)return;const a=entries.filter(o=>de(o)===C).sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||(y.creado||0)-(x.creado||0));
+function render(){portada();if(!K)return;const a=entries.filter(o=>de(o)===C),gk=o=>(o.fecha||"")+"|"+nom(o),gm={};
+ for(const o of a)gm[gk(o)]=Math.max(gm[gk(o)]||0,o.creado||0);
+ a.sort((x,y)=>(y.fecha||"").localeCompare(x.fecha||"")||gm[gk(y)]-gm[gk(x)]||(C==="te"?(+x.inf||1)-(+y.inf||1):0)||(y.creado||0)-(x.creado||0));
  $("#count").textContent=a.length?`(${a.length})`:"";
  $("#list").innerHTML=a.length?a.map(o=>{const c=(K.tonos.find(l=>l[0]===o.liquor)||[,"var(--line)"])[1];
   return `<article class="entry" data-id="${esc(o.id)}"><span class="dot" style="background:${c}"></span><div><h3>${esc(nom(o))}</h3><p>${esc(K.l1.map(k=>o[k]).filter(Boolean).join(" · "))}</p><p>${esc(K.l2.map(([k,u])=>o[k]&&o[k]+u).filter(Boolean).join(" · "))}</p>${(o.notas||[]).length?`<p>${esc(o.notas.join(", "))}</p>`:""}</div><div class="n">${esc(o.nota||"–")}</div><div class="acts"><button class="btn" data-a="edit">Abrir</button><button class="btn" data-a="copy">Copiar texto</button><button class="btn" data-a="del">Borrar</button></div></article>`}).join("")

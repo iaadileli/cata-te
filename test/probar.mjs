@@ -49,6 +49,18 @@ for (const [nom, mot] of [["Chromium", chromium], ["WebKit", webkit]].filter(x =
   ok(await p.inputValue("#nota") === "6", "abrir una cata importada incompleta"); await p.fill("#te", "Editada"); await p.click("#save"); await p.waitForSelector(".entry:visible");
   a = await catas(p); ok(a.length === 3 && a.find(x => x.id === "min").te === "Editada", "editar no duplica");
   await p.locator("[data-id=min] [data-a=del]").click(); await p.locator("[data-id=min] [data-a=del]").click(); ok((await catas(p)).length === 2, "borra");
+  // Varias infusiones del mismo té
+  await p.goto(URL_ + "#te/nueva"); await p.click("#reset"); await p.fill("#te", "Oolong con osmanto"); await p.fill("#seco", "flor"); await p.click("[data-g=hoja] >> text=Enrollada"); await p.fill("#tiempo", "20 s"); await p.click("[data-g=notas] >> text=Floral");
+  await p.click("#next"); await p.waitForTimeout(100);
+  ok(await p.inputValue("#inf") === "2" && await p.inputValue("#te") === "Oolong con osmanto" && await p.inputValue("#seco") === "flor" && await p.inputValue("#tiempo") === "" && await p.locator("[data-g=hoja] .chip[aria-pressed=true]").count() === 1 && await p.locator("[data-g=notas] .chip[aria-pressed=true]").count() === 0, "siguiente infusión: copia la ficha y la hoja seca, limpia lo demás");
+  ok((await p.textContent("#msg")).includes("2.ª"), "siguiente infusión: lo dice");
+  await p.waitForTimeout(500); await p.reload(); ok(await p.inputValue("#inf") === "2", "la 2.ª infusión queda como borrador");
+  await p.fill("#tiempo", "30 s"); await p.click("#next"); await p.waitForTimeout(100); await p.fill("#tiempo", "45 s"); await p.click("#save"); await p.waitForSelector(".entry:visible");
+  const inf = (await catas(p)).filter(x => x.te === "Oolong con osmanto"); ok(JSON.stringify(inf.map(x => x.inf + x.tiempo).sort()) === '["120 s","230 s","345 s"]', "tres infusiones guardadas");
+  const orden = await p.$$eval(".entry", x => x.map(y => y.textContent).filter(t => t.includes("osmanto")).map(t => t.match(/(\d)\.ª infusión/)[1]).join("")); ok(orden === "123", "en la lista salen juntas y en orden: " + orden);
+  await p.goto(URL_ + "#vino/nueva"); ok(!(await p.isVisible("#next")), "el botón de infusión solo sale en el té");
+  await p.evaluate(() => localStorage.setItem("cata-te-v1", JSON.stringify(JSON.parse(localStorage.getItem("cata-te-v1")).filter(x => x.te !== "Oolong con osmanto"))));
+  await p.goto(URL_ + "#te/catas"); await p.reload();
   // Las demás clases
   await p.goto(URL_ + "#te/nueva"); await p.fill("#te", "Borrador de té"); 
   for (const [c, n] of [["vino", "Vino"], ["cafe", "Café"]]) {
