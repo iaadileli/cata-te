@@ -4,12 +4,12 @@
 import { fusionar } from "./sincro.js";
 
 const CFG = {
-  apiKey: "AIzaSyDZsdeKaLqsjUZpdc_DEr9NrJ229IlW42s",
-  authDomain: "cuaderno-de-catas.firebaseapp.com",
-  projectId: "cuaderno-de-catas",
-  storageBucket: "cuaderno-de-catas.firebasestorage.app",
-  messagingSenderId: "46765293520",
-  appId: "1:46765293520:web:8dbaa4d463e8f8391743d5"
+  apiKey: "AIzaSyB_3fhswfaV-PF5uyQ6J67WygMItCOAz3o",
+  authDomain: "cuaderno-de-catas-8c3a5.firebaseapp.com",
+  projectId: "cuaderno-de-catas-8c3a5",
+  storageBucket: "cuaderno-de-catas-8c3a5.firebasestorage.app",
+  messagingSenderId: "638532234053",
+  appId: "1:638532234053:web:b71342b3cc6071924f6c2c"
 };
 const TB = "cata-te-borradas", DU = "cata-te-dueno";
 const api = window.catasAPI;
